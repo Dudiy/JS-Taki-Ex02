@@ -14,11 +14,16 @@ import CardContainer from "./CardContainer";
 export default class BaseContainer extends React.Component {
     constructor(args) {
         super(...args);
+        this.state = {
+            movesPlayed: []
+        }
         this.game = new Game(GameType.ADVANCED, 2, "Taki Man", "ex1");
         this.regularPlayer = new Player("Human player", false);
         this.computerPlayer = new Player("Computer player", true);
         this.initGame = this.initGame.bind(this);
         this.initGame();
+
+        this.addMoveToList = this.addMoveToList.bind(this);
     }
 
     initGame() {
@@ -44,14 +49,18 @@ export default class BaseContainer extends React.Component {
         });
     }
 
+    addMoveToList(movePlayed) {
+        this.setState({
+            movesPlayed: this.state.movesPlayed.push(movePlayed)
+        })
+    }
+
     render() {
         return (
             <div className="main-container">
                 <div style={mainContainerStyle}>
                     <PlayingTableContainer game={this.game}/>
-                    <PlayerContainer player={this.regularPlayer} game={this.game}>
-                        {/*{this.regularPlayer.getCards().map((card) => (<CardContainer card={card} key={card.getId()} game={this.game} parent={PlayerContainer}/>))}*/}
-                    </PlayerContainer>
+                    <PlayerContainer player={this.regularPlayer} game={this.game} addMoveToList={this.addMoveToList}/>
                 </div>
 
                 <div style={statisticsContainerStyle}>

@@ -13,6 +13,7 @@ export const SpecialCard = {
     PLUS_2: "+2",
     SUPER_TAKI: "super taki"
 };
+
 export const Color = {
     allColors: ["red", "green", "blue", "yellow"],
 

@@ -44,7 +44,9 @@ export default class CardContainer extends React.Component {
         }
         else {
             if (this.props.game.makeMove(cardClicked)) {
-                {this.props.renderParent()}
+                {
+                    this.props.renderParent()
+                }
             }
         }
     }
