@@ -25,7 +25,7 @@ export default class CardContainer extends React.Component {
             return (
                 <div
                     className={"card " + (this.props.card.getColor() !== null ? this.props.card.getColor() : " noColor") + (this.props.isClickable ? " clickable-card " : "") + (this.props.card.getValue().length > 1 ? "textCard " : "")}
-                    cardValue={this.props.card} id={this.props.card.getId()} onClick={this.cardClicked}>
+                    cardvalue={this.props.card} id={this.props.card.getId()} onClick={this.cardClicked}>
                     {this.props.card.getValue()}
                 </div>
             );
