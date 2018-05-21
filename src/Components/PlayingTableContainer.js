@@ -40,7 +40,7 @@ export default class PlayingTableContainer extends React.Component {
                     <div id="deck" className="card backOfCard clickable-card"/>
                 </div>
                 <div align="center">
-                    <CardContainer id="topCard" card={this.props.game.viewTopCardOnTable()}/>
+                    <CardContainer id="topCard" card={this.props.game.viewTopCardOnTable()} isClickable={false} onClick={null}/>
                 </div>
                 <div style={spaceBelowStyle}/>
             </div>

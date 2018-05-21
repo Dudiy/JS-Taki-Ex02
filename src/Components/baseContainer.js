@@ -50,9 +50,11 @@ export default class BaseContainer extends React.Component {
     }
 
     addMoveToList(movePlayed) {
-        this.setState({
-            movesPlayed: this.state.movesPlayed.push(movePlayed)
-        })
+        //TODO is it ok to do this instead of set state
+        this.state.movesPlayed.push(movePlayed);
+        // this.setState({
+        //     movesPlayed: this.state.movesPlayed.concat(movePlayed)
+        // })
     }
 
     render() {
