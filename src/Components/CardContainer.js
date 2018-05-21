@@ -36,18 +36,26 @@ export default class CardContainer extends React.Component {
 
     cardClicked() {
         let cardClicked = this.props.card;
-        if (cardClicked.getValue() === SpecialCard.CHANGE_COLOR && game.getGameState().gameState !== GameState.OPEN_TAKI) {
+        if (cardClicked.getValue() === SpecialCard.CHANGE_COLOR && this.props.game.getGameState().gameState !== GameState.OPEN_TAKI) {
             // document.getElementById("colorPicker").style.display = "flex";
             // document.getElementById("colorPicker").setAttribute("selectedCardId", cardClicked.getId());
             // document.getElementById("deck").classList.add("disabled-button");
             // playerCardsContainer.removeChild(cardElement);
         }
         else {
-            if (this.props.game.makeMove(cardClicked)) {
-                {
-                    this.props.renderParent()
+            let res = this.props.game.makeMove(cardClicked);
+            this.props.cardClicked();
+            const p = new Promise((resolve, reject) => {
+                if (res) {
+                    resolve('ok');
+                } else {
+                    reject('the function rejected');
                 }
-            }
+            });
+            p.then(this.props.cardClicked());
+            // if (this.props.game.makeMove(cardClicked)) {
+            //     this.props.cardClicked()
+            // }
         }
     }
 }

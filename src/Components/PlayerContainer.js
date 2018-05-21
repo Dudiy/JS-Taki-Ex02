@@ -33,8 +33,7 @@ export default class PlayerContainer extends React.Component {
         return (
             <div id="player-container">
                 {this.props.player.getCards().map((card) => (
-                    <CardContainer card={card} key={card.getId()} game={this.props.game} renderParent={this.cardClicked}/>))}
-                {/*{this.props.children}*/}
+                    <CardContainer card={card} key={card.getId()} game={this.props.game} cardClicked={this.cardClicked}/>))}
                 <div id="player-overlay" className="screen-overlay"><h1>Please wait for you turn</h1></div>
                 <div id="colorPicker" className="screen-overlay">
                     <h2>Please choose a color: </h2>

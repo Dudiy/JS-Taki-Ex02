@@ -155,7 +155,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
             chooseCardToPlaceFunc[i]();
         }
 
-        cardToPlace === undefined ? game.takeCardsFromDeck() : game.makeMove(cardToPlace, additionalData);
+        cardToPlace === undefined ? this.takeCardsFromDeck() : this.makeMove(cardToPlace, additionalData);
     }
 
     function checkIfActivePlayerWon() {
@@ -401,9 +401,9 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
 
             if (players[activePlayerIndex].isComputerPlayer()) {
                 // simulate thinking time
-                setTimeout(function () {
-                    makeComputerPlayerMove();
-                }, COMPUTER_DELAY);
+                // setTimeout(function () {
+                    makeComputerPlayerMove.bind(this).apply();
+                // }, COMPUTER_DELAY);
             }
 
             return true;
