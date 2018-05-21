@@ -28,7 +28,6 @@ const spaceBelowStyle = {
 export default class PlayingTableContainer extends React.Component {
     constructor(args) {
         super(...args);
-
     }
 
     render() {
