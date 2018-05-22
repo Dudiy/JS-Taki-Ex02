@@ -9,6 +9,7 @@
  */
 import React from "react";
 
+
 export default class StatisticsContainer extends React.Component {
     constructor(args) {
         super(...args);
@@ -19,7 +20,7 @@ export default class StatisticsContainer extends React.Component {
         return (
             <div id="statistics-container">
                 statistics container
-{/*                <div>Game timer: <span id="timer">00:00</span></div>
+                {/*                <div>Game timer: <span id="timer">00:00</span></div>
                 <br/>
                 <button type="button" className="red" onClick="exitGame()" style="width: fit-content">End game
                 </button>

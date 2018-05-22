@@ -10,6 +10,14 @@ import PlayingTableContainer from "./PlayingTableContainer";
 import PlayerContainer from "./PlayerContainer";
 import StatisticsContainer from "./StatisticsContainer";
 import CardContainer from "./CardContainer";
+import ComputerPlayerContainer from "./ComputerPlayerContainer";
+import takiLogo from "../takiImages/TAKI_logo.png";
+
+const imgStyle = {
+    width: 'fit-content',
+    height: 'fit-content',
+    alignSelf: 'center'
+};
 
 export default class BaseContainer extends React.Component {
     constructor(args) {
@@ -53,21 +61,6 @@ export default class BaseContainer extends React.Component {
         this.movesReplayed = [];
         console.log("Game started - top card is: ");
         this.game.viewTopCardOnTable().printCardToConsole();
-        document.addEventListener("DOMContentLoaded", function () {
-            // let currPlayerIndex = 0;
-            // let cardsRemainingTableElement = document.getElementById('cardsRemainingTable');
-            // let currPlayer;
-            // while (currPlayer = game.getPlayer(currPlayerIndex)) {
-            //     let newRow = document.createElement("tr");
-            //     newRow.innerHTML = "<td>" + currPlayer.getName() + "</td><td id='cardsRemaining_" + game.getPlayer(currPlayerIndex).getName() + "'>" + currPlayer.getCardsRemainingNum() + "</td>";
-            //     cardsRemainingTableElement.appendChild(newRow);
-            //     currPlayerIndex++;
-            // }
-            // updateStatistics();
-            // refreshCards();
-            // overlayToggle();
-            // setKeyMappings();
-        });
     }
 
     restartGame() {
@@ -100,9 +93,11 @@ export default class BaseContainer extends React.Component {
 
     render() {
         return (
-            <div className="main-container">
-                <div style={mainContainerStyle}>
-                    <PlayingTableContainer game={this.game} pickedUpCardFromDeck={this.movePlayed}>
+            <div id="main-container">
+                <div id="play-area-div">
+                    <div id="computer-player-and-table-container">
+                        <ComputerPlayerContainer player={this.computerPlayer} game={this.game}/>
+                        <PlayingTableContainer game={this.game} pickedUpCardFromDeck={this.movePlayed} />
                         <div id="playerWonScreen" style={this.state.playerWon ? displayOverlayStyle : null}>
                             <h1><span id="winningPlayerName"/> has won the game!</h1>
                             <button className="green" onClick={this.restartGame}>Play again</button>
@@ -110,27 +105,19 @@ export default class BaseContainer extends React.Component {
                             <p id="gameStatistics"/>
                             <p id="playerStatistics"/>
                         </div>
-                    </PlayingTableContainer>
+                    </div>
                     <PlayerContainer player={this.regularPlayer} game={this.game} movePlayed={this.movePlayed}/>
                 </div>
 
-                <div style={statisticsContainerStyle}>
+                <div id="statistics-div">
+                    <img src={takiLogo} alt="Taki Logo"
+                         style={imgStyle}/>
                     <StatisticsContainer/>
                 </div>
             </div>
         );
     }
 }
-
-const mainContainerStyle = {
-    width: '70%'
-};
-
-const statisticsContainerStyle = {
-    width: '30%',
-    display: 'flex',
-    alignContent: 'center'
-};
 
 const displayOverlayStyle = {
     display: "flex"

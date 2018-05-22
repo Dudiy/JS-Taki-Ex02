@@ -3,14 +3,9 @@
  * Or Mantzur - 204311997
  */
 import React from "react";
-import takiLogo from "../takiImages/TAKI_logo.png";
 import CardContainer from "./CardContainer";
 
-const imgStyle = {
-    width: 'fit-content',
-    height: 'fit-content',
-    alignSelf: 'center'
-};
+
 
 const spaceAboveStyle = {
     height: '15%'
@@ -33,11 +28,10 @@ export default class PlayingTableContainer extends React.Component {
     render() {
         return (
             <div id='playing_table_container'>
-                <img src={takiLogo} alt="Taki Logo"
-                     style={imgStyle}/>
+
                 <div style={spaceAboveStyle}/>
                 <div align="center" style={deckStyle}>
-                    <div id="deck" className="card backOfCard clickable-card" onClick={this.clickedDeck}/>
+                    <div id="deck" className="card backOfCard deckCard clickable-card" onClick={this.clickedDeck}/>
                 </div>
                 <div align="center">
                     <CardContainer id="topCard" card={this.props.game.viewTopCardOnTable()} isClickable={false}
