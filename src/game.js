@@ -5,7 +5,7 @@
 
 import {Deck} from "./deck";
 import {CardsOnTable} from "./cardsOnTable";
-import {Color, SpecialCard} from "./card";
+import {Card, Color, SpecialCard} from "./card";
 
 const COMPUTER_DELAY = 1.5 * 1000;
 const NUM_STARTING_CARDS = 8;
@@ -78,7 +78,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         let cardDrawnFromDeck;
         do {
             cardDrawnFromDeck = m_Deck.drawCards(1)[0];
-        } while (cardDrawnFromDeck.getValue() === SpecialCard.CHANGE_COLOR || cardDrawnFromDeck.getValue() === SpecialCard.SUPER_TAKI);
+        } while (cardDrawnFromDeck.getValue() === SpecialCard.CHANGE_COLOR || cardDrawnFromDeck.getValue() === SpecialCard.SUPER_TAKI || cardDrawnFromDeck.getValue() === SpecialCard.PLUS_2);
 
         m_CardsOnTable.putCardOnTable(cardDrawnFromDeck);
         players[activePlayerIndex].startTurn();
@@ -99,7 +99,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         } else if (gameState.gameState === GameState.OPEN_PLUS_2) {
             isValid = cardPlaced.getValue() === SpecialCard.PLUS_2;
         } else {
-            isValid = topCardOnTable.getColor() === cardPlaced.getColor() || topCardOnTable.getValue() === cardPlaced.getValue() || cardPlaced.getValue() === SpecialCard.CHANGE_COLOR;
+            isValid = topCardOnTable.getColor() === cardPlaced.getColor() || topCardOnTable.getValue() === cardPlaced.getValue() || cardPlaced.getValue() === SpecialCard.CHANGE_COLOR || cardPlaced.getValue() === SpecialCard.SUPER_TAKI;
             // TODO (advanced game) - add any relevant special card
         }
 
@@ -155,7 +155,11 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
             chooseCardToPlaceFunc[i]();
         }
 
-        cardToPlace === undefined ? this.takeCardsFromDeck() : this.makeMove(cardToPlace, additionalData);
+        if (cardToPlace !== undefined && gameState.gameState === GameState.OPEN_PLUS_2 && cardToPlace.getValue() !== SpecialCard.PLUS_2)
+            cardToPlace = undefined;
+
+        let returnVal = cardToPlace === undefined ? this.takeCardsFromDeck().length > 0 : this.makeMove(cardToPlace, additionalData);
+        return returnVal;
     }
 
     function checkIfActivePlayerWon() {
@@ -313,11 +317,12 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         },
 
         takeCardsFromDeck: function () {
+            var cardsTaken = [];
             // check if there is a possible move that the player can make
             var card = players[activePlayerIndex].getPossibleMove(isValidMove);
             if (card !== null) {
                 console.log("Cannot take card from deck when there is a possible move. \nThe card that can be places is: " + card.getColor() + ", " + card.getValue());
-                return false;
+                return cardsTaken;
             }
 
             // check that there are enough cards in the deck, if not add the cards from the table to the deck so the deck won't remain empty
@@ -326,9 +331,9 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
                 moveCardsFromTableToDeck();
             }
 
-            var cardsTaken = [];
+            let numCardsToTake = 1;
             if (gameState.gameState === GameState.OPEN_PLUS_2) {
-                var numCardsToTake = gameState.additionalInfo;
+                numCardsToTake = gameState.additionalInfo;
                 cardsTaken = m_Deck.drawCards(numCardsToTake);
                 gameState.gameState = null;
                 gameState.additionalInfo = null;
@@ -336,8 +341,8 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
                 cardsTaken = m_Deck.drawCards(1);
             }
 
-            var activePlayer = players[activePlayerIndex];
-            console.log("player: " + activePlayer.getName() + " took a card from the deck");
+            let activePlayer = players[activePlayerIndex];
+            console.log("player: " + activePlayer.getName() + " took " + numCardsToTake + " cards from the deck");
             activePlayer.addCardsToHand(cardsTaken);
             moveToNextPlayer();
             if (players[activePlayerIndex].isComputerPlayer()) {
@@ -346,7 +351,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
                 }, COMPUTER_DELAY);
             }
 
-            return true;
+            return cardsTaken;
         },
 
         /**
@@ -399,13 +404,6 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
             console.log("Player \"" + activePlayer.getName() + "\" placed the following card on the table:");
             cardPlaced.printCardToConsole();
 
-            if (players[activePlayerIndex].isComputerPlayer()) {
-                // simulate thinking time
-                // setTimeout(function () {
-                    makeComputerPlayerMove.bind(this).apply();
-                // }, COMPUTER_DELAY);
-            }
-
             return true;
         },
 
@@ -436,7 +434,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         // used for debugging
         MakeComputerMove: function () {
             // setTimeout(makeComputerPlayerMove, 1000);
-            makeComputerPlayerMove();
+            return makeComputerPlayerMove.bind(this).apply();
         }
     };
 }

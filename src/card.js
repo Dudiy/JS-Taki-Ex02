@@ -25,8 +25,8 @@ export const Color = {
 Card.nextFreeCardId = 0;
 
 export function Card(color, value) {
-    let cardId = Card.nextFreeCardId++;
-    let cardValue = value;
+    const cardId = Card.nextFreeCardId++;
+    const cardValue = value;
     let cardColor = color;
 
     return {
@@ -43,16 +43,20 @@ export function Card(color, value) {
         },
 
         setColor: function (color) {
-            if (cardValue !== SpecialCard.CHANGE_COLOR) {
-                // throw new Error("color can only be changed for \"change color\" cards");
-                console.log("card color was not changed - color can only be changed for \"change color\" cards");
-            } else {
+            if (cardValue === SpecialCard.CHANGE_COLOR || cardValue === SpecialCard.SUPER_TAKI ) {
                 cardColor = color;
+            } else {
+                // throw new Error("color can only be changed for \"change color\" cards");
+                console.log("card color was not changed - color can only be changed for \"change color\" and \"super taki\" cards");
             }
         },
 
         printCardToConsole: function () {
             console.log("Color: " + cardColor + ", Value: " + cardValue);
+        },
+
+        toString: function () {
+            return "Color: " + cardColor + ", Value: " + cardValue;
         },
 
         isSpecialCard: function () {
