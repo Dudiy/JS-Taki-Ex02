@@ -346,7 +346,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
             activePlayer.addCardsToHand(cardsTaken);
             moveToNextPlayer();
             if (players[activePlayerIndex].isComputerPlayer()) {
-                setTimeout(function () {
+                setTimeout(() => function () {
                     makeComputerPlayerMove();
                 }, COMPUTER_DELAY);
             }
@@ -432,7 +432,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         },
 
         // used for debugging
-        MakeComputerMove: function () {
+        makeComputerMove: function () {
             // setTimeout(makeComputerPlayerMove, 1000);
             return makeComputerPlayerMove.bind(this).apply();
         }

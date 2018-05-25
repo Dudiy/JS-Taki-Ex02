@@ -37,7 +37,7 @@ export default class BaseContainer extends React.Component {
         this.computerPlayPromise = function () {
             const p = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    if (this.game.MakeComputerMove.bind(this.game).apply()) {
+                    if (this.game.makeComputerMove.bind(this.game).apply()) {
                         resolve('the function resolved');
                     } else {
                         reject('the function rejected');
