@@ -27,7 +27,7 @@ export default class BaseContainer extends React.Component {
             activePlayer: null,
             topCardOnTable: null,
             playerWon: false
-        }
+        };
         // this.game = new Game(GameType.ADVANCED, 2, "Taki Man", "ex1");
 
         // this.movesReplayed = [];
@@ -45,7 +45,7 @@ export default class BaseContainer extends React.Component {
                 }, 1500);
             });
             return p;
-        }
+        };
 
         this.movePlayed = this.movePlayed.bind(this);
         this.restartGame = this.restartGame.bind(this);
@@ -97,7 +97,7 @@ export default class BaseContainer extends React.Component {
                 <div id="play-area-div">
                     <div id="computer-player-and-table-container">
                         <ComputerPlayerContainer player={this.computerPlayer} game={this.game}/>
-                        <PlayingTableContainer game={this.game} pickedUpCardFromDeck={this.movePlayed} />
+                        <PlayingTableContainer game={this.game} regularPlayer={this.regularPlayer} pickedUpCardFromDeck={this.movePlayed} />
                         <div id="playerWonScreen" style={this.state.playerWon ? displayOverlayStyle : null}>
                             <h1><span id="winningPlayerName"/> has won the game!</h1>
                             <button className="green" onClick={this.restartGame}>Play again</button>

@@ -4,8 +4,7 @@
  */
 import React from "react";
 import CardContainer from "./CardContainer";
-
-
+import DeckContainer from "./DeckContainer";
 
 const spaceAboveStyle = {
     height: '15%'
@@ -22,7 +21,6 @@ const spaceBelowStyle = {
 export default class PlayingTableContainer extends React.Component {
     constructor(args) {
         super(...args);
-        this.clickedDeck = this.clickedDeck.bind(this);
     }
 
     render() {
@@ -30,9 +28,11 @@ export default class PlayingTableContainer extends React.Component {
             <div id='playing_table_container'>
 
                 <div style={spaceAboveStyle}/>
-                <div align="center" style={deckStyle}>
-                    <div id="deck" className="card backOfCard deckCard clickable-card" onClick={this.clickedDeck}/>
-                </div>
+
+                <DeckContainer game={this.props.game}
+                               regularPlayer={this.props.regularPlayer}
+                               pickedUpCardFromDeck={this.props.pickedUpCardFromDeck}/>
+
                 <div align="center">
                     <CardContainer id="topCard" card={this.props.game.viewTopCardOnTable()} isClickable={false}
                                    onClick={null}/>
@@ -42,19 +42,4 @@ export default class PlayingTableContainer extends React.Component {
             </div>
         );
     };
-
-    clickedDeck() {
-        let cardsTakenFromDeck = this.props.game.takeCardsFromDeck();
-        if (cardsTakenFromDeck.length === 0) {
-            let cardThatCanBePlaced = this.props.game.getPossibleMoveForActivePlayer();
-            const msg = "Cannot take card from the deck when there is a possible move to play\nYou can try placing '" + cardThatCanBePlaced.getValue() + " " + (cardThatCanBePlaced.getColor() !== null ? cardThatCanBePlaced.getColor() : "") + "'";
-            alert(msg);
-        } else {
-            let movePlayedRecord = {
-                move: 'tookFromDeck',
-                cardsTakenFromDeck: cardsTakenFromDeck
-            }
-            this.props.pickedUpCardFromDeck(movePlayedRecord);
-        }
-    }
 }

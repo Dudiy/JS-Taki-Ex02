@@ -19,7 +19,7 @@ export default class PlayerContainer extends React.Component {
             movesPlayed: 0,
             colorPickerVisible: false,
             changeColorCardSelected: null
-        }
+        };
         this.cardClicked = this.cardClicked.bind(this);
         this.colorPickerClickedCard = this.colorPickerClickedCard.bind(this);
     }
@@ -49,7 +49,7 @@ export default class PlayerContainer extends React.Component {
             cardPlaced: i_Card,
             player: this.props.player,
             // turnTime: this.props.game.getActivePlayer().getStatistics() //TODO get avg turn time until this move
-        }
+        };
         this.props.movePlayed(movePlayedRecord);
     }
 
