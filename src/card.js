@@ -23,7 +23,7 @@ export const Color = {
     }
 };
 
-export class Card {
+export default class Card {
 
     constructor(value, color) {
         this._id = Card.nextFreeCardId++;

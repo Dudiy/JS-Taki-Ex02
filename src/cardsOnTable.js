@@ -3,36 +3,37 @@
  * Or Mantzur - 204311997
  */
 
-export function CardsOnTable() {
-    let cards = [];
+export default class CardsOnTable {
 
-    return {
-        getSize: function () {
-            return cards.length;
-        },
+    constructor() {
+        this._cards = [];
+    }
 
-        putCardOnTable: function (card) {
-            cards.push(card);
-        },
+    getSize() {
+        return this._cards.length;
+    }
 
-        viewTopCard: function () {
-            let topCard = null;
-            if (cards.length > 0) {
-                topCard = cards[cards.length - 1];
-            }
-            return topCard;
-        },
+    putCardOnTable(card) {
+        this._cards.push(card);
+    }
 
-        /**
-         * used in case where cards need to be move from the table back to the deck
-         * @returns {*}
-         */
-        takeAllButTopCard: function () {
-            let pickedUpCards = null;
-            if (cards.length > 0) {
-                pickedUpCards = cards.splice(1, cards.length - 1);
-            }
-            return pickedUpCards;
-        },
+    viewTopCard() {
+        let topCard = null;
+        if (this._cards.length > 0) {
+            topCard = this._cards[this._cards.length - 1];
+        }
+        return topCard;
+    }
+
+    /**
+     * used in case where cards need to be move from the table back to the deck
+     * @returns {*}
+     */
+    takeAllButTopCard() {
+        let pickedUpCards = null;
+        if (this._cards.length > 0) {
+            pickedUpCards = this._cards.splice(1, this._cards.length - 1);
+        }
+        return pickedUpCards;
     }
 }

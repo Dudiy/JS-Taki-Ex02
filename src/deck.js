@@ -3,7 +3,7 @@
  * Or Mantzur - 204311997
  */
 
-import {Card, Color, SpecialCard} from "./card";
+import Card, {Color, SpecialCard} from "./card";
 import {NUMBER_CARD} from "./card";
 import {GameType} from "./game";
 
