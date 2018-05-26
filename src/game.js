@@ -168,7 +168,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         // check if the active player win
         if (activePlayer.getCardsRemainingNum() === 0 && !needToTakeCardFromDeck()) {
             playerWon = true;
-            activePlayer.setIsWinner(true);
+            activePlayer.win();
             console.log("Player \"" + activePlayer.getName() + "\" has won!");
             gameEnded(activePlayer);
         }
@@ -416,7 +416,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
             var somePlayerInGame = playerWhoLeftTheGame;
             players.forEach(function (player) {
                 if (player === playerWhoLeftTheGame) {
-                    player.setIsLeave(true);
+                    player.leave();
                     console.log("player " + player.getName() + " leave the game");
                 } else if (!player.isLeave()) {
                     // if that player was the only player that stay in game
