@@ -36,4 +36,5 @@ export default class CardsOnTable {
         }
         return pickedUpCards;
     }
+
 }

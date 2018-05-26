@@ -3,9 +3,9 @@
  * Or Mantzur - 204311997
  */
 
-import {Deck} from "./deck";
-import CardsOnTable from "./cardsOnTable";
 import Card,{Color, SpecialCard} from "./card";
+import CardsOnTable from "./cardsOnTable";
+import Deck from "./deck";
 
 const COMPUTER_DELAY = 1.5 * 1000;
 const NUM_STARTING_CARDS = 8;
@@ -38,7 +38,7 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
     let players = [];
     let activePlayerIndex = 0;
     let gameIsActive = false;
-    let m_Deck = Deck(gameType);
+    let m_Deck = new Deck(gameType);
     let m_CardsOnTable =  new CardsOnTable();
     let gameStartTime = new Date();
     let gameEndTime = null;
