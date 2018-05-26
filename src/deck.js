@@ -68,7 +68,7 @@ export function Deck(i_GameType) {
     function createCards(value, color, amount) {
         let newCards = [];
         for (let i = 0; i < amount; i++) {
-            newCards.push(Card(color, value));
+            newCards.push(new Card(value, color));
         }
         return newCards;
     }

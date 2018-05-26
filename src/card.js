@@ -22,51 +22,54 @@ export const Color = {
         return Color.allColors[randomIndex];
     }
 };
-Card.nextFreeCardId = 0;
 
-export function Card(color, value) {
-    const cardId = Card.nextFreeCardId++;
-    const cardValue = value;
-    let cardColor = color;
+export class Card {
 
-    return {
-        getId: function () {
-            return cardId;
-        },
+    constructor(value, color) {
+        this._id = Card.nextFreeCardId++;
+        this._value = value;
+        this._color = color;
+    }
 
-        getColor: function () {
-            return cardColor;
-        },
+    getId() {
+        return this._id;
+    }
 
-        getValue: function () {
-            return cardValue;
-        },
+    getValue() {
+        return this._value;
+    }
 
-        setColor: function (color) {
-            if (cardValue === SpecialCard.CHANGE_COLOR || cardValue === SpecialCard.SUPER_TAKI ) {
-                cardColor = color;
-            } else {
-                // throw new Error("color can only be changed for \"change color\" cards");
-                console.log("card color was not changed - color can only be changed for \"change color\" and \"super taki\" cards");
-            }
-        },
+    getColor() {
+        return this._color;
+    }
 
-        printCardToConsole: function () {
-            console.log("Color: " + cardColor + ", Value: " + cardValue);
-        },
-
-        toString: function () {
-            return "Color: " + cardColor + ", Value: " + cardValue;
-        },
-
-        isSpecialCard: function () {
-            let isSpecial = false;
-            for (let specialCardKey in SpecialCard) {
-                if (value === SpecialCard[specialCardKey]) {
-                    isSpecial = true;
-                }
-            }
-            return isSpecial;
+    setColor(color) {
+        if (this._value === SpecialCard.CHANGE_COLOR || this._value === SpecialCard.SUPER_TAKI) {
+            this._color = color;
+        } else {
+            // throw new Error("color can only be changed for \"change color\" cards");
+            console.log("card color was not changed - color can only be changed for \"change color\" and \"super taki\" cards");
         }
-    };
+    }
+
+    isSpecialCard() {
+        let isSpecial = false;
+        for (let specialCardKey in SpecialCard) {
+            if (this._value === SpecialCard[specialCardKey]) {
+                isSpecial = true;
+            }
+        }
+        return isSpecial;
+    }
+
+    toString() {
+        return "Color: " + this._color + ", Value: " + this._value;
+    }
+
+    printCardToConsole() {
+        console.log(this.toString());
+    }
+
 }
+
+Card.nextFreeCardId = 0;
