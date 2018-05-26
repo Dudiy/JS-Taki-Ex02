@@ -3,16 +3,18 @@
  * Or Mantzur - 204311997
  */
 
-import Card,{Color, SpecialCard} from "./card";
+import Card, {Color, SpecialCard} from "./card";
 import CardsOnTable from "./cardsOnTable";
 import Deck from "./deck";
 
 const COMPUTER_DELAY = 1.5 * 1000;
 const NUM_STARTING_CARDS = 8;
+
 export const GameType = {
     BASIC: "basic",
     ADVANCED: "advanced"
 };
+
 export const GameState = {
     OPEN_TAKI: "openTaki",
     OPEN_PLUS: "openPlus",
@@ -26,34 +28,84 @@ export const GameState = {
     CLOSE_PLUS_2: "closePlus2"
 };
 
-Game.nextFreeGameId = 0;
 
-export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
-    // TODO (advanced game) Validate in gameManager when there is more than one game
-    let numPlayersToStartGame = i_PlayerNum;
-    let gameCreator = i_GameCreator;
-    let gameID = Game.nextFreeGameId++;
-    let gameName = i_GameName;
-    let gameType = i_GameType;
-    let players = [];
-    let activePlayerIndex = 0;
-    let gameIsActive = false;
-    let m_Deck = new Deck(gameType);
-    let m_CardsOnTable =  new CardsOnTable();
-    let gameStartTime = new Date();
-    let gameEndTime = null;
-    let gameState = {
-        currColor: null,
-        gameState: null,
-        additionalInfo: null // TODO (advanced game) will be used for counter on +2
-    };
+export default class Game {
 
-    function statistics() {
+    constructor(gameType, playersNum, gameName, gameCreator) {
+        // TODO (advanced game) Validate in gameManager when there is more than one game
+        this._gameId = Game.nextFreeGameId++;
+        this._gameType = gameType;
+        this._numPlayersToStartGame = playersNum;
+        this._gameName = gameName;
+        this._gameCreator = gameCreator;
+        this._players = [];
+        this._activePlayerIndex = 0;
+        this._activeGame = false;
+        this._deck = new Deck(gameType);
+        this._cardsOnTable = new CardsOnTable();
+        this._gameStartTime = new Date();
+        this._gameEndTime = null;
+        this._gameState = {
+            currColor: null,
+            gameState: undefined,
+            additionalInfo: null // TODO (advanced game) will be used for counter on +2
+        };
+    }
+
+    getGameId(){
+        return this._gameId;
+    }
+
+    getGameType(){
+        return this._gameType;
+    }
+
+    getGameName(){
+        return this._gameName;
+    }
+
+    getGameCreator(){
+        return this._gameCreator;
+    }
+
+    getActivePlayer() {
+        return this._players[this._activePlayerIndex];
+    }
+
+    getPlayer(playerId) {
+        return this._players[playerId];
+    }
+
+    isActiveGame(){
+        return this._activeGame;
+    }
+
+    getCardsRemainingInDeck() {
+        return this._deck.getSize();
+    }
+
+    getCardsOnTableCount() {
+        return this._cardsOnTable.getSize();
+    }
+
+    getGameState() {
+        return this._gameState;
+    }
+
+    _getGameDuration() {
+        return (this._gameEndTime === null ? new Date() : this._gameEndTime) - this._gameStartTime;
+    }
+
+    getGameDuration() {
+        return this._getGameDuration();
+    }
+
+    getStatistics() {
         let totalTurnsPlayed = 0;
-        players.forEach(function (player) {
+        this._players.forEach(function (player) {
             totalTurnsPlayed += player.getTotalTurnsPlayed();
         });
-        let gameDuration = getGameDurationPrivate();
+        let gameDuration = this._getGameDuration();
         let minutesPlayed = Math.floor(gameDuration / (1000 * 60));
         let secondsPlayed = Math.floor(gameDuration / 1000) % 60;
         return {
@@ -67,36 +119,105 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         };
     }
 
-    function getGameDurationPrivate() {
-        return (gameEndTime === null ? new Date() : gameEndTime) - gameStartTime;
+    addPlayerToGame(playerToAdd) {
+        let playerAdded = false;
+        if (this._active || this._players.length >= this._numPlayersToStartGame) {
+            console.log("Cannot add another player, game is full or has already started");
+        } else {
+            this._players.push(playerToAdd);
+            playerToAdd.addCardsToHand(this._deck.drawCards(NUM_STARTING_CARDS));
+            console.log("GameID (" + this._gameId + "): " + playerToAdd.getName() + " has joined the game");
+            playerAdded = true;
+            if (this._players.length === this._numPlayersToStartGame) {
+                this._startGame();
+            }
+        }
+        return playerAdded;
     }
 
-    function startGame() {
-        gameIsActive = true;
-        console.log("GameID (" + gameID + "): The game has started");
+    /**
+     * game start only when there are enough players in game
+     * @private
+     */
+    _startGame() {
+        this._activeGame = true;
+        console.log("GameID (" + this._gameId + "): The game has started");
         // open start card (can't start with changeColor or superTaki card)
         let cardDrawnFromDeck;
         do {
-            cardDrawnFromDeck = m_Deck.drawCards(1)[0];
+            cardDrawnFromDeck = this._deck.drawCards(1)[0];
         } while (cardDrawnFromDeck.getValue() === SpecialCard.CHANGE_COLOR || cardDrawnFromDeck.getValue() === SpecialCard.SUPER_TAKI || cardDrawnFromDeck.getValue() === SpecialCard.PLUS_2);
 
-        m_CardsOnTable.putCardOnTable(cardDrawnFromDeck);
-        players[activePlayerIndex].startTurn();
+        this._cardsOnTable.putCardOnTable(cardDrawnFromDeck);
+        this._players[this._activePlayerIndex].startTurn();
     }
 
-    function moveCardsFromTableToDeck() {
-        let pickedUpCards = m_CardsOnTable.takeAllButTopCard();
-        m_Deck.addCardsToDeck(pickedUpCards);
+    _moveCardsFromTableToDeck() {
+        let pickedUpCards = this._cardsOnTable.takeAllButTopCard();
+        this._deck.addCardsToDeck(pickedUpCards);
     }
 
-    function isValidMove(cardPlaced) {
+    /**
+     *
+     * @param cardPlaced
+     * @param additionalData - additional info such as color for "change color" card
+     * @returns {boolean} - true if move was successful else false
+     */
+    makeMove(cardPlaced, additionalData) {
+        // first, check move validation
+        if (!this._isValidMove(cardPlaced)) {
+            // TODO change back to error
+            // throw new Error("Invalid move!");
+            console.log("Invalid move!");
+            return false;
+        }
+
+        // the move
+        // var cardValue = cardPlaced.getValue();
+        let activePlayer = this._players[this._activePlayerIndex];
+        activePlayer.removeCardFromHand(cardPlaced);
+        this._cardsOnTable.putCardOnTable(cardPlaced);
+
+        if (activePlayer.getCardsRemainingNum() === 1) {
+            activePlayer.increaseTimesReachedSingleCard();
+        } else if (this._checkIfActivePlayerWon()) {
+            return true;
+        }
+
+        // check if after the move there are more valid moves
+        if (this._gameState.gameState === GameState.OPEN_TAKI && activePlayer.getCardOfColor(cardPlaced.getColor()) !== undefined) {
+            // taki open + player has more cards of the same color = player gets another turn;
+        } else {
+            if (this._gameState.gameState === GameState.OPEN_TAKI) {
+                // taki open + player has no more cards of the same color = return to normal state
+                this._gameState.gameState = undefined;
+                this._gameState.additionalInfo = null;
+            }
+            if (cardPlaced.isSpecialCard()) {
+                // make changes to game state according to placed card
+                this._afterMoveOfSpecialCard(cardPlaced, additionalData);
+            } else {
+                this._gameState.gameState = undefined;
+                this._gameState.additionalInfo = null;
+                this._moveToNextPlayer();
+            }
+        }
+
+        // for debugging
+        console.log("Player \"" + activePlayer.getName() + "\" placed the following card on the table:");
+        cardPlaced.printCardToConsole();
+
+        return true;
+    }
+
+    _isValidMove(cardPlaced) {
         let isValid = true;
-        let topCardOnTable = m_CardsOnTable.viewTopCard();
-        if (gameState.gameState === GameState.OPEN_TAKI) {
+        let topCardOnTable = this._cardsOnTable.viewTopCard();
+        if (this._gameState.gameState === GameState.OPEN_TAKI) {
             isValid = topCardOnTable.getColor() === cardPlaced.getColor();
-        } else if (gameState.gameState === GameState.SUPER_TAKI) {
+        } else if (this._gameState.gameState === GameState.SUPER_TAKI) {
             // TODO (advanced game)
-        } else if (gameState.gameState === GameState.OPEN_PLUS_2) {
+        } else if (this._gameState.gameState === GameState.OPEN_PLUS_2) {
             isValid = cardPlaced.getValue() === SpecialCard.PLUS_2;
         } else {
             isValid = topCardOnTable.getColor() === cardPlaced.getColor() || topCardOnTable.getValue() === cardPlaced.getValue() || cardPlaced.getValue() === SpecialCard.CHANGE_COLOR || cardPlaced.getValue() === SpecialCard.SUPER_TAKI;
@@ -106,106 +227,42 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         return isValid;
     }
 
-    function makeComputerPlayerMove() {
-        let activePlayer = players[activePlayerIndex];
-        let topCard = m_CardsOnTable.viewTopCard();
-        let cardToPlace;
-        let additionalData;
-        let chooseCardToPlaceFunc = [function () {
-            // anyColorPlus2card
-            cardToPlace = gameState.gameState === GameState.OPEN_PLUS_2 ? activePlayer.getCardOfValue(SpecialCard.PLUS_2) : undefined;
-        }, function () {
-            // sameColorPlus2card
-            cardToPlace = activePlayer.getCardOfColorAndValue(topCard.getColor(), SpecialCard.PLUS_2);
-        }, function () {
-            // changeColorCard
-            cardToPlace = activePlayer.getCardOfValue(SpecialCard.CHANGE_COLOR);
-            if (cardToPlace !== undefined) {
-                let i;
-                for (i = 0; Color.allColors[i] !== undefined; i++) {
-                    if (activePlayer.getCardOfColor(Color.allColors[i]) !== undefined) {
-                        break;
-                    }
-                }
-                additionalData = Color.allColors[i] !== undefined ? Color.allColors[i] : Color.getRandomColor();
-            }
-        }, function () {
-            // sameColorStopCard
-            cardToPlace = activePlayer.getCardOfColorAndValue(topCard.getColor(), SpecialCard.STOP);
-        }, function () {
-            // sameColorPlusCard
-            cardToPlace = activePlayer.getCardOfColorAndValue(topCard.getColor(), SpecialCard.PLUS);
-        }, function () {
-            // superTakiCard
-            cardToPlace = activePlayer.getCardOfValue(SpecialCard.SUPER_TAKI);
-            additionalData = topCard.getColor();
-        }, function () {
-            // sameColorTakiCard
-            cardToPlace = activePlayer.getCardOfColorAndValue(topCard.getColor(), SpecialCard.TAKI);
-        }, function () {
-            cardToPlace = activePlayer.getCardOfColor(topCard.getColor());
-        }, function () {
-            if (gameState.gameState !== GameState.OPEN_TAKI) {
-                cardToPlace = activePlayer.getCardOfValue(topCard.getValue());
-            }
-        }];
-
-        // iterate through all function until a card is found, if not then draw a card from th deck
-        for (let i = 0; i < chooseCardToPlaceFunc.length && cardToPlace === undefined; i++) {
-            chooseCardToPlaceFunc[i]();
-        }
-
-        if (cardToPlace !== undefined && gameState.gameState === GameState.OPEN_PLUS_2 && cardToPlace.getValue() !== SpecialCard.PLUS_2)
-            cardToPlace = undefined;
-
-        let returnVal = cardToPlace === undefined ? this.takeCardsFromDeck().length > 0 : this.makeMove(cardToPlace, additionalData);
-        return returnVal;
-    }
-
-    function checkIfActivePlayerWon() {
+    _checkIfActivePlayerWon() {
         let playerWon = false;
-        let activePlayer = players[activePlayerIndex];
+        let activePlayer = this._players[this._activePlayerIndex];
         // check if the active player win
-        if (activePlayer.getCardsRemainingNum() === 0 && !needToTakeCardFromDeck()) {
+        if (activePlayer.getCardsRemainingNum() === 0 && !this.needToTakeCardFromDeck()) {
             playerWon = true;
             activePlayer.win();
             console.log("Player \"" + activePlayer.getName() + "\" has won!");
-            gameEnded(activePlayer);
+            this._gameEnded(activePlayer);
         }
         return playerWon;
     }
 
-    /**
-     * call only at the end of move
-     * @returns {boolean}
-     */
-    function needToTakeCardFromDeck() {
-        return m_CardsOnTable.viewTopCard().getValue() === SpecialCard.PLUS;
-    }
-
-    function afterMoveOfSpecialCard(card, additionalData) {
+    _afterMoveOfSpecialCard(card, additionalData) {
         let cardValue = card.getValue();
         switch (cardValue) {
             case SpecialCard.STOP:
                 // two calls to skip the next player
                 let skipOnePlayer = true;
-                moveToNextPlayer(skipOnePlayer);
+                this._moveToNextPlayer(skipOnePlayer);
                 console.log("in case - Stop");
                 break;
             case SpecialCard.TAKI:
                 // if the player put down a "taki" card and has more cards to put then set state to "openTaki"
-                if (players[activePlayerIndex].getCardOfColor(card.getColor()) !== undefined) {
-                    gameState.gameState = GameState.OPEN_TAKI;
+                if (this._players[this._activePlayerIndex].getCardOfColor(card.getColor()) !== undefined) {
+                    this._gameState.gameState = GameState.OPEN_TAKI;
                 } else {
                     // the player doesn't have more cards to place, so no need to change state to "openTaki"
-                    gameState.gameState = null;
-                    moveToNextPlayer();
+                    this._gameState.gameState = undefined;
+                    this._moveToNextPlayer();
                 }
                 console.log("in case - Taki");
                 break;
             case SpecialCard.SUPER_TAKI:
                 card.setColor(additionalData);
-                gameState.gameState = GameState.OPEN_TAKI;
+                this._gameState.gameState = GameState.OPEN_TAKI;
                 console.log("in case - Super Taki");
                 break;
             case SpecialCard.CHANGE_COLOR:
@@ -214,17 +271,17 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
                 }
                 card.setColor(additionalData);
                 console.log("change color to " + additionalData);
-                moveToNextPlayer();
+                this._moveToNextPlayer();
                 console.log("in case - Change Color");
                 break;
             case SpecialCard.PLUS_2:
-                if (gameState.gameState === GameState.OPEN_PLUS_2)
-                    gameState.additionalInfo += 2;
+                if (this._gameState.gameState === GameState.OPEN_PLUS_2)
+                    this._gameState.additionalInfo += 2;
                 else {
-                    gameState.gameState = GameState.OPEN_PLUS_2;
-                    gameState.additionalInfo = 2;
+                    this._gameState.gameState = GameState.OPEN_PLUS_2;
+                    this._gameState.additionalInfo = 2;
                 }
-                moveToNextPlayer();
+                this._moveToNextPlayer();
                 console.log("in case - PLUS_2");
                 break;
             case SpecialCard.PLUS:
@@ -236,205 +293,155 @@ export function Game(i_GameType, i_PlayerNum, i_GameCreator, i_GameName) {
         }
     }
 
-    function moveToNextPlayer(skipOnePlayer) {
-        players[activePlayerIndex].endTurn();
-        activePlayerIndex = (activePlayerIndex + (skipOnePlayer === true ? 2 : 1)) % players.length;
-        players[activePlayerIndex].startTurn();
+    _moveToNextPlayer(skipOnePlayer) {
+        this._players[this._activePlayerIndex].endTurn();
+        this._activePlayerIndex = (this._activePlayerIndex + (skipOnePlayer === true ? 2 : 1)) % this._players.length;
+        this._players[this._activePlayerIndex].startTurn();
     }
 
-    function gameEnded(playerWhoWon) {
-        gameIsActive = false;
-        gameState.gameState = GameState.GAME_ENDED;
-        gameState.additionalInfo = playerWhoWon;
-        gameEndTime = new Date();
+    getPossibleMoveForActivePlayer() {
+        return this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove,this);
+    }
+
+    viewTopCardOnTable() {
+        return this._cardsOnTable.viewTopCard();
+    }
+
+    takeCardsFromDeck() {
+        let cardsTaken = [];
+        // check if there is a possible move that the player can make
+        let card = this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove,this);
+        if (card !== null) {
+            console.log("Cannot take card from deck when there is a possible move. \nThe card that can be places is: " + card.getColor() + ", " + card.getValue());
+            return cardsTaken;
+        }
+
+        // check that there are enough cards in the deck, if not add the cards from the table to the deck so the deck won't remain empty
+        if ((this._deck.getSize() <= 1) ||
+            (this._gameState.gameState === GameState.OPEN_PLUS_2 && this._cardsOnTable.getSize() <= this._gameState.additionalInfo + 1)) {
+            this._moveCardsFromTableToDeck();
+        }
+
+        let numCardsToTake = 1;
+        if (this._gameState.gameState === GameState.OPEN_PLUS_2) {
+            numCardsToTake = this._gameState.additionalInfo;
+            cardsTaken = this._deck.drawCards(numCardsToTake);
+            this._gameState.gameState = undefined;
+            this._gameState.additionalInfo = null;
+        } else {
+            cardsTaken = this._deck.drawCards(1);
+        }
+
+        let activePlayer = this._players[this._activePlayerIndex];
+        console.log("player: " + activePlayer.getName() + " took " + numCardsToTake + " cards from the deck");
+        activePlayer.addCardsToHand(cardsTaken);
+        this._moveToNextPlayer();
+        if (this._players[this._activePlayerIndex].isComputerPlayer()) {
+            setTimeout(() => function () {
+                this.makeComputerPlayerMove();
+            }, COMPUTER_DELAY);
+        }
+
+        return cardsTaken;
+    }
+
+    /**
+     * call only at the end of move
+     * @returns {boolean}
+     */
+    needToTakeCardFromDeck() {
+        return this._cardsOnTable.viewTopCard().getValue() === SpecialCard.PLUS;
+    }
+
+    makeComputerPlayerMove() {
+        let activePlayer = this._players[this._activePlayerIndex];
+        let topCard = this._cardsOnTable.viewTopCard();
+        let cardToPlace;
+        let additionalData;
+        let chooseCardToPlaceFunc = [() => {
+            // anyColorPlus2card
+            cardToPlace = this._gameState.gameState === GameState.OPEN_PLUS_2 ? activePlayer.getCardOfValue(SpecialCard.PLUS_2) : undefined;
+        }, () => {
+            // sameColorPlus2card
+            cardToPlace = activePlayer.getCardOfColorAndValue(topCard.getColor(), SpecialCard.PLUS_2);
+        }, () => {
+            // changeColorCard
+            cardToPlace = activePlayer.getCardOfValue(SpecialCard.CHANGE_COLOR);
+            if (cardToPlace !== undefined) {
+                let i;
+                for (i = 0; Color.allColors[i] !== undefined; i++) {
+                    if (activePlayer.getCardOfColor(Color.allColors[i]) !== undefined) {
+                        break;
+                    }
+                }
+                additionalData = Color.allColors[i] !== undefined ? Color.allColors[i] : Color.getRandomColor();
+            }
+        }, () => {
+            // sameColorStopCard
+            cardToPlace = activePlayer.getCardOfColorAndValue(topCard.getColor(), SpecialCard.STOP);
+        }, () => {
+            // sameColorPlusCard
+            cardToPlace = activePlayer.getCardOfColorAndValue(topCard.getColor(), SpecialCard.PLUS);
+        }, () => {
+            // superTakiCard
+            cardToPlace = activePlayer.getCardOfValue(SpecialCard.SUPER_TAKI);
+            additionalData = topCard.getColor();
+        }, () => {
+            // sameColorTakiCard
+            cardToPlace = activePlayer.getCardOfColorAndValue(topCard.getColor(), SpecialCard.TAKI);
+        }, () => {
+            cardToPlace = activePlayer.getCardOfColor(topCard.getColor());
+        }, () => {
+            if (this._gameState.gameState !== GameState.OPEN_TAKI) {
+                cardToPlace = activePlayer.getCardOfValue(topCard.getValue());
+            }
+        }];
+
+        // iterate through all function until a card is found, if not then draw a card from th deck
+        for (let i = 0; i < chooseCardToPlaceFunc.length && cardToPlace === undefined; i++) {
+            chooseCardToPlaceFunc[i]();
+        }
+
+        if (cardToPlace !== undefined && this._gameState.gameState === GameState.OPEN_PLUS_2 && cardToPlace.getValue() !== SpecialCard.PLUS_2)
+            cardToPlace = undefined;
+
+        return cardToPlace === undefined ? this.takeCardsFromDeck().length > 0 : this.makeMove(cardToPlace, additionalData);
+    }
+
+    _gameEnded(playerWhoWon) {
+        this._active = false;
+        this._gameState.gameState = GameState.GAME_ENDED;
+        this._gameState.additionalInfo = playerWhoWon;
+        this._gameEndTime = new Date();
         console.log("game ended");
     }
 
-    return {
-
-        getGameId: function () {
-            return gameID;
-        },
-
-        getGameCreator: function () {
-            return gameCreator;
-        },
-
-        getGameState: function () {
-            return gameState;
-        },
-
-        getCardsRemainingInDeck: function () {
-            return m_Deck.getSize();
-        },
-
-        getCardsOnTableCount: function () {
-            return m_CardsOnTable.getSize();
-        },
-
-        isActive: function () {
-            return gameIsActive;
-        },
-
-        getActivePlayer: function () {
-            return players[activePlayerIndex];
-        },
-
-        getPlayer: function (playerId) {
-            return players[playerId];
-        },
-
-        getStatistics: function () {
-            return statistics();
-        },
-
-        getGameDuration: function () {
-            return getGameDurationPrivate();
-        },
-
-        getPossibleMoveForActivePlayer: function () {
-            return players[activePlayerIndex].getPossibleMove(isValidMove);
-        },
-
-        addPlayerToGame: function (i_playerToAdd) {
-            var playerAdded = false;
-            if (gameIsActive || players.length >= numPlayersToStartGame) {
-                console.log("Cannot add another player, game is full or has already started");
-            } else {
-                players.push(i_playerToAdd);
-                i_playerToAdd.addCardsToHand(m_Deck.drawCards(NUM_STARTING_CARDS));
-                console.log("GameID (" + gameID + "): " + i_playerToAdd.getName() + " has joined the game");
-                playerAdded = true;
-                if (players.length === numPlayersToStartGame) {
-                    startGame();
-                }
+    leaveGame(playerWhoLeftTheGame) {
+        let countPlayerThatInGame = 0;
+        let somePlayerInGame = playerWhoLeftTheGame;
+        this._players.forEach(function (player) {
+            if (player === playerWhoLeftTheGame) {
+                player.leave();
+                console.log("player " + player.getName() + " leave the game");
+            } else if (!player.isLeave()) {
+                // if that player was the only player that stay in game
+                // determine him to the winner
+                somePlayerInGame = player;
+                countPlayerThatInGame++;
             }
-            return playerAdded;
-        },
+        });
 
-        viewTopCardOnTable: function () {
-            return m_CardsOnTable.viewTopCard();
-        },
-
-        takeCardsFromDeck: function () {
-            var cardsTaken = [];
-            // check if there is a possible move that the player can make
-            var card = players[activePlayerIndex].getPossibleMove(isValidMove);
-            if (card !== null) {
-                console.log("Cannot take card from deck when there is a possible move. \nThe card that can be places is: " + card.getColor() + ", " + card.getValue());
-                return cardsTaken;
-            }
-
-            // check that there are enough cards in the deck, if not add the cards from the table to the deck so the deck won't remain empty
-            if ((m_Deck.getSize() <= 1) ||
-                (gameState.gameState === GameState.OPEN_PLUS_2 && m_CardsOnTable.getSize() <= gameState.additionalInfo + 1)) {
-                moveCardsFromTableToDeck();
-            }
-
-            let numCardsToTake = 1;
-            if (gameState.gameState === GameState.OPEN_PLUS_2) {
-                numCardsToTake = gameState.additionalInfo;
-                cardsTaken = m_Deck.drawCards(numCardsToTake);
-                gameState.gameState = null;
-                gameState.additionalInfo = null;
-            } else {
-                cardsTaken = m_Deck.drawCards(1);
-            }
-
-            let activePlayer = players[activePlayerIndex];
-            console.log("player: " + activePlayer.getName() + " took " + numCardsToTake + " cards from the deck");
-            activePlayer.addCardsToHand(cardsTaken);
-            moveToNextPlayer();
-            if (players[activePlayerIndex].isComputerPlayer()) {
-                setTimeout(() => function () {
-                    makeComputerPlayerMove();
-                }, COMPUTER_DELAY);
-            }
-
-            return cardsTaken;
-        },
-
-        /**
-         *
-         * @param cardPlaced
-         * @param additionalData - additional info such as color for "change color" card
-         * @returns {boolean} - true if move was successful else false
-         */
-        makeMove: function (cardPlaced, additionalData) {
-            // first, check move validation
-            if (!isValidMove(cardPlaced)) {
-                // TODO change back to error
-                // throw new Error("Invalid move!");
-                console.log("Invalid move!");
-                return false;
-            }
-
-            // the move
-            // var cardValue = cardPlaced.getValue();
-            var activePlayer = players[activePlayerIndex];
-            activePlayer.removeCardFromHand(cardPlaced);
-            m_CardsOnTable.putCardOnTable(cardPlaced);
-
-            if (activePlayer.getCardsRemainingNum() === 1) {
-                activePlayer.increaseTimesReachedSingleCard();
-            } else if (checkIfActivePlayerWon()) {
-                return true;
-            }
-
-            // check if after the move there are more valid moves
-            if (gameState.gameState === GameState.OPEN_TAKI && activePlayer.getCardOfColor(cardPlaced.getColor()) !== undefined) {
-                // taki open + player has more cards of the same color = player gets another turn;
-            } else {
-                if (gameState.gameState === GameState.OPEN_TAKI) {
-                    // taki open + player has no more cards of the same color = return to normal state
-                    gameState.gameState = null;
-                    gameState.additionalInfo = null;
-                }
-                if (cardPlaced.isSpecialCard()) {
-                    // make changes to game state according to placed card
-                    afterMoveOfSpecialCard(cardPlaced, additionalData);
-                } else {
-                    gameState.gameState = null;
-                    gameState.additionalInfo = null;
-                    moveToNextPlayer();
-                }
-            }
-
-            // for debugging
-            console.log("Player \"" + activePlayer.getName() + "\" placed the following card on the table:");
-            cardPlaced.printCardToConsole();
-
-            return true;
-        },
-
-        /**
-         *
-         * @param playerWhoLeftTheGame
-         */
-        leaveGame: function (playerWhoLeftTheGame) {
-            var countPlayerThatInGame = 0;
-            var somePlayerInGame = playerWhoLeftTheGame;
-            players.forEach(function (player) {
-                if (player === playerWhoLeftTheGame) {
-                    player.leave();
-                    console.log("player " + player.getName() + " leave the game");
-                } else if (!player.isLeave()) {
-                    // if that player was the only player that stay in game
-                    // determine him to the winner
-                    somePlayerInGame = player;
-                    countPlayerThatInGame++;
-                }
-            });
-
-            if (countPlayerThatInGame < 2) {
-                gameEnded(somePlayerInGame);
-            }
-        },
-
-        // used for debugging
-        makeComputerMove: function () {
-            // setTimeout(makeComputerPlayerMove, 1000);
-            return makeComputerPlayerMove.bind(this).apply();
+        if (countPlayerThatInGame < 2) {
+            this._gameEnded(somePlayerInGame);
         }
-    };
+    }
+
+    // used for debugging
+    makeComputerMove() {
+        // setTimeout(makeComputerPlayerMove, 1000);
+        return this.makeComputerPlayerMove.bind(this).apply();
+    }
+
 }
+
+Game.nextFreeGameId = 0;

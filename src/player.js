@@ -11,7 +11,7 @@
  * @returns {*}
  * @constructor
  */
-export class Player {
+export default class Player {
 
     constructor(playerName, isComputer) {
         this._playerId = Player.nextFreePlayerId++;
@@ -125,10 +125,10 @@ export class Player {
      * @param isValidFunc
      * @returns {Card}
      */
-    getPossibleMove(isValidFunc) {
+    getPossibleMove(isValidFunc, contextFunc) {
         let cardThatCanBePlaced = null;
         for (let i = 0; i < this._cards.length; i++) {
-            if (isValidFunc(this._cards[i]) === true) {
+            if (isValidFunc.call(contextFunc, this._cards[i]) === true) {
                 cardThatCanBePlaced = this._cards[i];
                 break;
             }

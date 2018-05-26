@@ -4,8 +4,8 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Game, GameState, GameType} from "../game";
-import {Player} from "../player";
+import Game, { GameState, GameType} from "../game";
+import Player from "../player";
 import PlayingTableContainer from "./PlayingTableContainer";
 import PlayerContainer from "./PlayerContainer";
 import StatisticsContainer from "./StatisticsContainer";
@@ -85,7 +85,7 @@ export default class BaseContainer extends React.Component {
         if (this.game.getGameState().gameState === GameState.GAME_ENDED) {
             this.setState({playerWon: true});
         } else if (this.game.getActivePlayer().isComputerPlayer()) {
-            this.computerPlayPromise().then(value => {
+            this.computerPlayPromise().then(() => {
                 this.movePlayed(this.game.viewTopCardOnTable());
             })
         }
