@@ -18,7 +18,7 @@ export default class PlayerContainer extends React.Component {
         this.state = {
             movesPlayed: 0,
             colorPickerVisible: false,
-            changeColorCardSelected: null
+            changeColorCardSelected: null //TODO stopped here 28/5
         };
         this.cardClicked = this.cardClicked.bind(this);
         this.colorPickerClickedCard = this.colorPickerClickedCard.bind(this);

@@ -22,19 +22,14 @@ const imgStyle = {
 export default class BaseContainer extends React.Component {
     constructor(args) {
         super(...args);
-        this.state = {
-            totalMovesPlayed: 0,
-            activePlayer: null,
-            topCardOnTable: null,
-            playerWon: false
-        };
         // this.game = new Game(GameType.ADVANCED, 2, "Taki Man", "ex1");
 
         // this.movesReplayed = [];
         this.initGame = this.initGame.bind(this);
         this.generateGameState = this.generateGameState.bind(this);
+        this.updateUIGameState = this.updateUIGameState.bind(this);
         this.initGame();
-        // this.initGame();
+        this.state = this.generateGameState();
         this.computerPlayPromise = function () {
             const p = new Promise((resolve, reject) => {
                 setTimeout(() => {
@@ -50,11 +45,20 @@ export default class BaseContainer extends React.Component {
 
         this.movePlayed = this.movePlayed.bind(this);
         this.restartGame = this.restartGame.bind(this);
+        this.callSetState = this.callSetState.bind(this);
+
+        document.onkeypress = (function (keyPressed) {
+            if (keyPressed.code === "Space") {
+                this. callSetState(this.uiGameStatesArray[0]);
+                alert("up to date?!");
+            }
+        }).bind(this);
+
     }
 
     initGame() {
         this.game = new Game(GameType.ADVANCED, 2, "Taki Man", "ex1");
-        this.game.setNotifyOnMakeMove(this.generateGameState);
+        this.game.setNotifyOnMakeMove(this.updateUIGameState);
         this.regularPlayer = new Player("Human player", false);
         this.computerPlayer = new Player("Computer player", true);
         this.game.addPlayerToGame(this.regularPlayer);
@@ -66,44 +70,50 @@ export default class BaseContainer extends React.Component {
     }
 
     generateGameState() {
-        let gameStateUI = {
+        return {
+            playerWon: this.game.getGameState().gameState === GameState.GAME_ENDED,
             activePlayer: this.game.getActivePlayer(),
-            regularPlayerCards: this.game.getFirstHumanPlayer().getCards(),
-            numCardsComputerPlayer: this.game.getFirstComputerPlayer().getCardsRemainingNum(),
+            regularPlayerCards: this.game.getFirstHumanPlayer().getCards().slice(),
+            computerPlayerCards: this.game.getFirstComputerPlayer().getCards().slice(),
             topCardOnTable: this.game.viewTopCardOnTable(),
-            gameStatistics: this.game.getStatistics(),
-            regularPlayerStats: this.game.getFirstHumanPlayer().getStatistics(),
-            computerPlayerStats: this.game.getFirstComputerPlayer().getStatistics(),
-            currentGameState: this.game.getGameState()
+            currentGameState: this.game.getGameState(),
+            statistics: {
+                gameStatistics: this.game.getStatistics(),
+                regularPlayerStats: this.game.getFirstHumanPlayer().getStatistics(),
+                computerPlayerStats: this.game.getFirstComputerPlayer().getStatistics(),
+            }
         };
-        this.uiGameStatesArray.push(gameStateUI);
-        this.updateUIState(gameStateUI);
     }
 
-    updateUIState(gameStateUI) {
+    updateUIGameState() {
+        let gameStateUI = this.generateGameState();
+        this.uiGameStatesArray.push(gameStateUI);
+        this.callSetState(gameStateUI);
+    }
+
+    callSetState(gameStateUI) {
         this.setState({
+            playerWon: gameStateUI.playerWon,
             activePlayer: gameStateUI.activePlayer,
             regularPlayerCards: gameStateUI.regularPlayerCards,
-            numCardsComputerPlayer: gameStateUI.numCardsComputerPlayer,
+            computerPlayerCards: gameStateUI.computerPlayerCards,
             topCardOnTable: gameStateUI.topCardOnTable,
-            gameStatistics: gameStateUI.gameStatistics,
-            regularPlayerStats: gameStateUI.regularPlayerCards,
-            computerPlayerStats: gameStateUI.computerPlayerStats,
-            currentGameState: gameStateUI.currentGameState
+            currentGameState: gameStateUI.currentGameState,
+            statistics: {
+                gameStatistics: gameStateUI.statistics.gameStatistics,
+                regularPlayerStats: gameStateUI.statistics.regularPlayerCards,
+                computerPlayerStats: gameStateUI.statistics.computerPlayerStats,
+            }
         });
     }
 
     restartGame() {
         this.initGame();
-        this.setState({
-            totalMovesPlayed: 0,
-            activePlayer: this.regularPlayer,
-            topCardOnTable: null,
-            playerWon: false
-        });
+        this.uiGameStatesArray = [];
+        this.updateUIGameState()
     }
 
-    movePlayed(movePlayedRecord) {
+    movePlayed() {
         //TODO is it ok to do this instead of set state
         // this.uiGameStatesArray.push(movePlayedRecord);
         // this.setState({
@@ -116,7 +126,7 @@ export default class BaseContainer extends React.Component {
             this.setState({playerWon: true});
         } else if (this.game.getActivePlayer().isComputerPlayer()) {
             this.computerPlayPromise().then(() => {
-                this.movePlayed(this.game.viewTopCardOnTable());
+                this.movePlayed();
             })
         }
     }
@@ -126,8 +136,8 @@ export default class BaseContainer extends React.Component {
             <div id="main-container">
                 <div id="play-area-div">
                     <div id="computer-player-and-table-container">
-                        <ComputerPlayerContainer player={this.computerPlayer} game={this.game}/>
-                        <PlayingTableContainer game={this.game} regularPlayer={this.regularPlayer}
+                        <ComputerPlayerContainer cards={this.state.computerPlayerCards}/>
+                        <PlayingTableContainer topCardOnTable={this.state.topCardOnTable} game={this.game} regularPlayer={this.regularPlayer}
                                                pickedUpCardFromDeck={this.movePlayed}/>
                         <div id="playerWonScreen" style={this.state.playerWon ? displayOverlayStyle : null}>
                             <h1><span id="winningPlayerName"/> has won the game!</h1>
@@ -143,7 +153,7 @@ export default class BaseContainer extends React.Component {
                 <div id="statistics-div">
                     <img src={takiLogo} alt="Taki Logo"
                          style={imgStyle}/>
-                    <StatisticsContainer/>
+                    <StatisticsContainer statistics={this.state.statistics} activePlayer={this.state.activePlayer}/>
                 </div>
             </div>
         );

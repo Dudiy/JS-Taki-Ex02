@@ -123,7 +123,9 @@ export default class Game {
         let secondsPlayed = Math.floor(gameDuration / 1000) % 60;
         return {
             totalTurnsPlayed: totalTurnsPlayed,
-            gameDuration: (minutesPlayed < 10 ? "0" + minutesPlayed : minutesPlayed) + ":" + (secondsPlayed < 10 ? "0" + secondsPlayed : secondsPlayed)
+            gameDuration: (minutesPlayed < 10 ? "0" + minutesPlayed : minutesPlayed) + ":" + (secondsPlayed < 10 ? "0" + secondsPlayed : secondsPlayed),
+            cardsOnTable: this.getCardsOnTableCount(),
+            cardsInDeck: this.getCardsRemainingInDeck()
         };
     }
 

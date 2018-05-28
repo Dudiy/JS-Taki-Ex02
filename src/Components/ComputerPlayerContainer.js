@@ -20,7 +20,7 @@ export default class ComputerPlayerContainer extends React.Component {
     render() {
         return (
             <div id="computer-player-container">
-                {this.props.player.getCards().map((card) => (
+                {this.props.cards.map((card) => (
                     <div className={"card backOfCard"} key={card.getId()}/>))}
             </div>
         );
