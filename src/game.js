@@ -6,6 +6,7 @@
 import Card, {Color, SpecialCard} from "./card";
 import CardsOnTable from "./cardsOnTable";
 import Deck from "./deck";
+import Player from "./player";
 
 const COMPUTER_DELAY = 1.5 * 1000;
 const NUM_STARTING_CARDS = 8;
@@ -30,7 +31,6 @@ export const GameState = {
 
 
 export default class Game {
-
     constructor(gameType, playersNum, gameName, gameCreator) {
         // TODO (advanced game) Validate in gameManager when there is more than one game
         this._gameId = Game.nextFreeGameId++;
@@ -50,21 +50,26 @@ export default class Game {
             gameState: undefined,
             additionalInfo: null // TODO (advanced game) will be used for counter on +2
         };
+        this._notifyOnMakeMove = null;
     }
 
-    getGameId(){
+    setNotifyOnMakeMove(callback) {
+        this._notifyOnMakeMove = callback;
+    }
+
+    getGameId() {
         return this._gameId;
     }
 
-    getGameType(){
+    getGameType() {
         return this._gameType;
     }
 
-    getGameName(){
+    getGameName() {
         return this._gameName;
     }
 
-    getGameCreator(){
+    getGameCreator() {
         return this._gameCreator;
     }
 
@@ -76,7 +81,15 @@ export default class Game {
         return this._players[playerId];
     }
 
-    isActiveGame(){
+    getFirstHumanPlayer() {
+        return this._players.find(player => !player.isComputerPlayer());
+    }
+
+    getFirstComputerPlayer() {
+        return this._players.find(player => player.isComputerPlayer());
+    }
+
+    isActiveGame() {
         return this._activeGame;
     }
 
@@ -109,13 +122,8 @@ export default class Game {
         let minutesPlayed = Math.floor(gameDuration / (1000 * 60));
         let secondsPlayed = Math.floor(gameDuration / 1000) % 60;
         return {
-            getTotalTurnsPlayed: function () {
-                return totalTurnsPlayed;
-            },
-
-            getGameDuration: function () {
-                return (minutesPlayed < 10 ? "0" + minutesPlayed : minutesPlayed) + ":" + (secondsPlayed < 10 ? "0" + secondsPlayed : secondsPlayed);
-            }
+            totalTurnsPlayed: totalTurnsPlayed,
+            gameDuration: (minutesPlayed < 10 ? "0" + minutesPlayed : minutesPlayed) + ":" + (secondsPlayed < 10 ? "0" + secondsPlayed : secondsPlayed)
         };
     }
 
@@ -150,6 +158,7 @@ export default class Game {
 
         this._cardsOnTable.putCardOnTable(cardDrawnFromDeck);
         this._players[this._activePlayerIndex].startTurn();
+        // this._notifyOnMakeMove();
     }
 
     _moveCardsFromTableToDeck() {
@@ -207,6 +216,7 @@ export default class Game {
         console.log("Player \"" + activePlayer.getName() + "\" placed the following card on the table:");
         cardPlaced.printCardToConsole();
 
+        this._notifyOnMakeMove();
         return true;
     }
 
@@ -300,7 +310,7 @@ export default class Game {
     }
 
     getPossibleMoveForActivePlayer() {
-        return this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove,this);
+        return this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove, this);
     }
 
     viewTopCardOnTable() {
@@ -310,7 +320,7 @@ export default class Game {
     takeCardsFromDeck() {
         let cardsTaken = [];
         // check if there is a possible move that the player can make
-        let card = this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove,this);
+        let card = this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove, this);
         if (card !== null) {
             console.log("Cannot take card from deck when there is a possible move. \nThe card that can be places is: " + card.getColor() + ", " + card.getValue());
             return cardsTaken;
@@ -336,12 +346,13 @@ export default class Game {
         console.log("player: " + activePlayer.getName() + " took " + numCardsToTake + " cards from the deck");
         activePlayer.addCardsToHand(cardsTaken);
         this._moveToNextPlayer();
-        if (this._players[this._activePlayerIndex].isComputerPlayer()) {
-            setTimeout(() => function () {
-                this.makeComputerPlayerMove();
-            }, COMPUTER_DELAY);
-        }
+        // if (this._players[this._activePlayerIndex].isComputerPlayer()) {
+        //     setTimeout(() => function () {
+        //         this.makeComputerPlayerMove();
+        //     }, COMPUTER_DELAY);
+        // }
 
+        this._notifyOnMakeMove();
         return cardsTaken;
     }
 

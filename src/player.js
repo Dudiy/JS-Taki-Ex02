@@ -121,6 +121,14 @@ export default class Player {
         return this._timesReachedSingleCard;
     }
 
+    getStatistics(){
+        return{
+            avgTurnTime: this.getAverageTurnTime(),
+            totalTurnsPlayed: this._turnsPlayed,
+            timesReachedSingleCard: this._timesReachedSingleCard
+        }
+    }
+
     /**
      * @param isValidFunc
      * @returns {Card}
