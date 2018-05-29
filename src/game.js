@@ -160,7 +160,6 @@ export default class Game {
 
         this._cardsOnTable.putCardOnTable(cardDrawnFromDeck);
         this._players[this._activePlayerIndex].startTurn();
-        // this._notifyOnMakeMove();
     }
 
     _moveCardsFromTableToDeck() {

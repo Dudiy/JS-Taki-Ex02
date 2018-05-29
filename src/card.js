@@ -9,7 +9,6 @@ export const SpecialCard = {
     STOP: "stop",
     CHANGE_COLOR: "change color",
     PLUS: "plus",
-    // TODO advance game
     PLUS_2: "+2",
     SUPER_TAKI: "super taki"
 };
