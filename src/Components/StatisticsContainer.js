@@ -52,7 +52,7 @@ export default class StatisticsContainer extends React.Component {
     render() {
         return (
             <div id="statistics-container">
-                <div>{this.props.inReplayMode ? "replay mode - paused" : ("Game timer: " + this.state.timerValueStr)}</div>
+                <div>{this.props.inReplayMode ? "Replay mode - paused" : ("Game timer: " + this.state.timerValueStr)}</div>
                 <div className={"replay-controls-div"}>
                     <img src={button_prev} alt="prev" className={"replay-button"} style={imgStyle}
                          hidden={!this.props.inReplayMode} onClick={this.props.replayControls.prev}/>
@@ -70,31 +70,29 @@ export default class StatisticsContainer extends React.Component {
                 <table id="cardsRemainingTable">
                     <tbody>
                     <tr>
-                        <th>owner</th>
-                        <th>cards</th>
+                        <th>Owner</th>
+                        <th>Cards</th>
                     </tr>
                     <tr>
-                        <td>deck</td>
-                        <td id="cardsInDeckCount">{this.props.statistics.gameStatistics.cardsInDeck}</td>
+                        <td>Deck</td>
+                        <td>{this.props.statistics.gameStatistics.cardsInDeck}</td>
                     </tr>
                     <tr>
-                        <td>table</td>
-                        <td id="cardsOnTableCount">{this.props.statistics.gameStatistics.cardsOnTable}</td>
+                        <td>Table</td>
+                        <td>{this.props.statistics.gameStatistics.cardsOnTable}</td>
                     </tr>
                     <tr>
                         <td>Human player</td>
-                        <td id="cardsOnTableCount">{this.props.statistics.regularPlayerStats.numCardsInHand}</td>
+                        <td>{this.props.statistics.regularPlayerStats.numCardsInHand}</td>
                     </tr>
                     <tr>
                         <td>Computer player</td>
-                        <td id="cardsOnTableCount">{this.props.statistics.computerPlayerStats.numCardsInHand}</td>
+                        <td>{this.props.statistics.computerPlayerStats.numCardsInHand}</td>
                     </tr>
                     </tbody>
                 </table>
-                <h5>Total turns played: <span
-                    id="totalTurnsPlayed">{this.props.statistics.gameStatistics.totalTurnsPlayed}</span></h5>
-                <h5>Active player: <span
-                    id="activePlayer">{this.props.activePlayer !== undefined ? this.props.activePlayer.getName() : ""}</span>
+                <h5>Total turns played: {this.props.statistics.gameStatistics.totalTurnsPlayed}</h5>
+                <h5>Active player: {this.props.activePlayer !== undefined ? this.props.activePlayer.getName() : ""}
                 </h5>
             </div>
         );
