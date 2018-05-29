@@ -125,7 +125,7 @@ export default class Game {
             totalTurnsPlayed: totalTurnsPlayed,
             gameDuration: (minutesPlayed < 10 ? "0" + minutesPlayed : minutesPlayed) + ":" + (secondsPlayed < 10 ? "0" + secondsPlayed : secondsPlayed),
             cardsOnTable: this.getCardsOnTableCount(),
-            cardsInDeck: this.getCardsRemainingInDeck()
+            cardsInDeck: this.getCardsRemainingInDeck(),
         };
     }
 
@@ -330,7 +330,7 @@ export default class Game {
 
         // check that there are enough cards in the deck, if not add the cards from the table to the deck so the deck won't remain empty
         if ((this._deck.getSize() <= 1) ||
-            (this._gameState.gameState === GameState.OPEN_PLUS_2 && this._cardsOnTable.getSize() <= this._gameState.additionalInfo + 1)) {
+            (this._gameState.gameState === GameState.OPEN_PLUS_2 && this._deck.getSize() <= this._gameState.additionalInfo + 1)) {
             this._moveCardsFromTableToDeck();
         }
 
@@ -348,12 +348,6 @@ export default class Game {
         console.log("player: " + activePlayer.getName() + " took " + numCardsToTake + " cards from the deck");
         activePlayer.addCardsToHand(cardsTaken);
         this._moveToNextPlayer();
-        // if (this._players[this._activePlayerIndex].isComputerPlayer()) {
-        //     setTimeout(() => function () {
-        //         this.makeComputerPlayerMove();
-        //     }, COMPUTER_DELAY);
-        // }
-
         this._notifyOnMakeMove();
         return cardsTaken;
     }
@@ -447,11 +441,10 @@ export default class Game {
         if (countPlayerThatInGame < 2) {
             this._gameEnded(somePlayerInGame);
         }
+        this._notifyOnMakeMove();
     }
 
-    // used for debugging
     makeComputerMove() {
-        // setTimeout(makeComputerPlayerMove, 1000);
         return this.makeComputerPlayerMove.bind(this).apply();
     }
 

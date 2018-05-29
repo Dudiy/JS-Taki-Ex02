@@ -28,14 +28,14 @@ export default class PlayingTableContainer extends React.Component {
             <div id='playing_table_container'>
 
                 <div style={spaceAboveStyle}/>
-
                 <DeckContainer game={this.props.game}
                                regularPlayer={this.props.regularPlayer}
-                               pickedUpCardFromDeck={this.props.pickedUpCardFromDeck}/>
-
+                               pickedUpCardFromDeck={this.props.pickedUpCardFromDeck}
+                               deckDisabled={this.props.deckDisabled}
+                               highlightDeck={this.props.highlightDeck}
+                />
                 <div align="center">
-                    <CardContainer id="topCard" card={this.props.topCardOnTable} isClickable={false}
-                                   onClick={null}/>
+                    <CardContainer id="topCard" card={this.props.topCardOnTable} isClickable={false} onClick={null}/>
                 </div>
                 <div style={spaceBelowStyle}/>
                 {this.props.children}

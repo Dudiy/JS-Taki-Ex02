@@ -8,23 +8,63 @@
  * Or Mantzur - 204311997
  */
 import React from "react";
+import button_pause from "../takiImages/button_pause.png";
+import button_play from "../takiImages/button_play.png";
+import button_prev from "../takiImages/button_prev.png";
+import button_next from "../takiImages/button_next.png";
 
+const imgStyle = {
+    width: '50px',
+    height: '50px',
+    alignSelf: 'center'
+};
 
 export default class StatisticsContainer extends React.Component {
     constructor(args) {
         super(...args);
+        this.state = {
+            timerValueInt: 0,
+            timerValueStr: "00:00",
+            restartTimer: false
+        };
 
+        setInterval(() => {
+            if (this.props.gameEnded) {
+                this.setState({restartTimer: true});
+            } else if (!this.props.inReplayMode) {
+                if (this.state.restartTimer) {
+                    this.setState({
+                        timerValueInt: 0,
+                        timerValueStr: "00:00",
+                        restartTimer: false
+                    })
+                } else {
+                    let prevTimerValue = this.state.timerValueInt;
+                    let secondsPlayed = Math.floor(prevTimerValue) % 60;
+                    let minutesPlayed = Math.floor(prevTimerValue / 60);
+                    let newTimerValueStr = (minutesPlayed < 10 ? "0" + minutesPlayed : minutesPlayed) + ":" + (secondsPlayed < 10 ? "0" + secondsPlayed : secondsPlayed);
+                    this.setState({timerValueInt: prevTimerValue + 1, timerValueStr: newTimerValueStr});
+                }
+            }
+        }, 1000)
     }
 
     render() {
         return (
             <div id="statistics-container">
-                <h3>statistics container</h3>
-                {/*<p>{this.props.statistics !== undefined ? this.props.statistics.gameStatistics.totalTurnsPlayed : 0}</p>*/}
-                {/*<div>Game timer: <span id="timer">00:00</span></div>*/}
-                <br/>
-                {/*<button type="button" className="red" onClick="exitGame()" style="width: fit-content">End game*/}
-                {/*</button>*/}
+                <div>{this.props.inReplayMode ? "replay mode - paused" : ("Game timer: " + this.state.timerValueStr)}</div>
+                <div className={"replay-controls-div"}>
+                    <img src={button_prev} alt="prev" className={"replay-button"} style={imgStyle}
+                         hidden={!this.props.inReplayMode} onClick={this.props.replayControls.prev}/>
+                    <img src={button_pause} alt="pause" className={(this.props.activePlayer.isComputerPlayer() ? 'disabled-button ' : ' ') + "replay-button"} style={imgStyle}
+                         hidden={this.props.inReplayMode} onClick={this.props.replayControls.pause}/>
+                    <img src={button_play} alt="play" className={"replay-button"} style={imgStyle}
+                         hidden={!this.props.inReplayMode} onClick={this.props.replayControls.resume}/>
+                    <img src={button_next} alt="next" className={"replay-button"} style={imgStyle}
+                         hidden={!this.props.inReplayMode} onClick={this.props.replayControls.next}/>
+                </div>
+                <button type="button" className={(this.props.activePlayer.isComputerPlayer() || this.props.inReplayMode ? 'disabled-button ' : ' ') + "red "} onClick={this.props.exitGame}>End game
+                </button>
 
                 <h5>Cards remaining:</h5>
                 <table id="cardsRemainingTable">
@@ -40,6 +80,14 @@ export default class StatisticsContainer extends React.Component {
                     <tr>
                         <td>table</td>
                         <td id="cardsOnTableCount">{this.props.statistics.gameStatistics.cardsOnTable}</td>
+                    </tr>
+                    <tr>
+                        <td>Human player</td>
+                        <td id="cardsOnTableCount">{this.props.statistics.regularPlayerStats.numCardsInHand}</td>
+                    </tr>
+                    <tr>
+                        <td>Computer player</td>
+                        <td id="cardsOnTableCount">{this.props.statistics.computerPlayerStats.numCardsInHand}</td>
                     </tr>
                     </tbody>
                 </table>

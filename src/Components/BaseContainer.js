@@ -9,9 +9,9 @@ import Player from "../player";
 import PlayingTableContainer from "./PlayingTableContainer";
 import PlayerContainer from "./PlayerContainer";
 import StatisticsContainer from "./StatisticsContainer";
-import CardContainer from "./CardContainer";
 import ComputerPlayerContainer from "./ComputerPlayerContainer";
 import takiLogo from "../takiImages/TAKI_logo.png";
+import PlayerWonContainer from "./PlayerWonContainer";
 
 const imgStyle = {
     width: 'fit-content',
@@ -22,9 +22,6 @@ const imgStyle = {
 export default class BaseContainer extends React.Component {
     constructor(args) {
         super(...args);
-        // this.game = new Game(GameType.ADVANCED, 2, "Taki Man", "ex1");
-
-        // this.movesReplayed = [];
         this.initGame = this.initGame.bind(this);
         this.generateGameState = this.generateGameState.bind(this);
         this.updateUIGameState = this.updateUIGameState.bind(this);
@@ -46,14 +43,38 @@ export default class BaseContainer extends React.Component {
         this.movePlayed = this.movePlayed.bind(this);
         this.restartGame = this.restartGame.bind(this);
         this.callSetState = this.callSetState.bind(this);
-
+        this.exitGameClicked = this.exitGameClicked.bind(this);
+        this.replayNext = this.replayNext.bind(this);
+        this.replayPause = this.replayPause.bind(this);
+        this.replayPrev = this.replayPrev.bind(this);
+        this.replayResumeGame = this.replayResumeGame.bind(this);
         document.onkeypress = (function (keyPressed) {
-            if (keyPressed.code === "Space") {
-                this. callSetState(this.uiGameStatesArray[0]);
-                alert("up to date?!");
+            if (keyPressed.code === "KeyQ") {
+                this.setState({inReplayMode: true});
+                if (this.state.currReplayIndex === null || this.state.currReplayIndex === undefined)
+                    this.state.currReplayIndex = this.uiGameStatesArray.length - 1;
+                if (this.state.currReplayIndex > 0)
+                    this.callSetState(this.uiGameStatesArray[--this.state.currReplayIndex]);
+            }
+            if (keyPressed.code === "KeyE") {
+                this.setState({inReplayMode: true});
+                if (this.state.currReplayIndex === null || this.state.currReplayIndex === undefined)
+                    this.state.currReplayIndex = this.uiGameStatesArray.length - 1;
+                if (this.state.currReplayIndex < this.uiGameStatesArray.length - 1)
+                    this.callSetState(this.uiGameStatesArray[++this.state.currReplayIndex]);
+            }
+            if (keyPressed.code === "KeyR") {
+                this.setState({inReplayMode: false});
+                this.state.currReplayIndex = null;
+                this.callSetState(this.uiGameStatesArray[this.uiGameStatesArray.length - 1]);
             }
         }).bind(this);
-
+        this.replayControls = {
+            next: this.replayNext,
+            prev: this.replayPrev,
+            pause: this.replayPause,
+            resume: this.replayResumeGame
+        };
     }
 
     initGame() {
@@ -64,9 +85,9 @@ export default class BaseContainer extends React.Component {
         this.game.addPlayerToGame(this.regularPlayer);
         this.game.addPlayerToGame(this.computerPlayer);
         this.uiGameStatesArray = [];
-        this.movesReplayed = [];
         console.log("Game started - top card is: ");
         this.game.viewTopCardOnTable().printCardToConsole();
+        this.uiGameStatesArray.push(this.generateGameState())
     }
 
     generateGameState() {
@@ -101,7 +122,7 @@ export default class BaseContainer extends React.Component {
             currentGameState: gameStateUI.currentGameState,
             statistics: {
                 gameStatistics: gameStateUI.statistics.gameStatistics,
-                regularPlayerStats: gameStateUI.statistics.regularPlayerCards,
+                regularPlayerStats: gameStateUI.statistics.regularPlayerStats,
                 computerPlayerStats: gameStateUI.statistics.computerPlayerStats,
             }
         });
@@ -110,18 +131,11 @@ export default class BaseContainer extends React.Component {
     restartGame() {
         this.initGame();
         this.uiGameStatesArray = [];
-        this.updateUIGameState()
+        this.updateUIGameState();
+        this.setState({inReplayMode: false});
     }
 
     movePlayed() {
-        //TODO is it ok to do this instead of set state
-        // this.uiGameStatesArray.push(movePlayedRecord);
-        // this.setState({
-        //     movesPlayed: this.state.totalMovesPlayed++,
-        //     activePlayer: this.game.getActivePlayer(),
-        //     topCardOnTable: this.game.viewTopCardOnTable()
-        // });
-
         if (this.game.getGameState().gameState === GameState.GAME_ENDED) {
             this.setState({playerWon: true});
         } else if (this.game.getActivePlayer().isComputerPlayer()) {
@@ -131,35 +145,73 @@ export default class BaseContainer extends React.Component {
         }
     }
 
+    exitGameClicked() {
+        if (!this.game.getActivePlayer().isComputerPlayer()) {
+            this.game.leaveGame(this.game.getFirstHumanPlayer());
+            this.setState({gameEnded: true});
+        }
+    }
+
+    replayPrev() {
+        this.setState({inReplayMode: true});
+        if (this.state.currReplayIndex === null || this.state.currReplayIndex === undefined)
+            this.state.currReplayIndex = this.uiGameStatesArray.length - 1;
+        if (this.state.currReplayIndex > 0)
+            this.callSetState(this.uiGameStatesArray[--this.state.currReplayIndex]);
+    }
+
+    replayNext() {
+        this.setState({inReplayMode: true});
+        if (this.state.currReplayIndex === null || this.state.currReplayIndex === undefined)
+            this.state.currReplayIndex = this.uiGameStatesArray.length - 1;
+        if (this.state.currReplayIndex < this.uiGameStatesArray.length - 1)
+            this.callSetState(this.uiGameStatesArray[++this.state.currReplayIndex]);
+    }
+
+    replayPause() {
+        this.setState({inReplayMode: true});
+    }
+
+    replayResumeGame() {
+        this.setState({inReplayMode: false});
+        this.state.currReplayIndex = null;
+        this.callSetState(this.uiGameStatesArray[this.uiGameStatesArray.length - 1]);
+    }
+
     render() {
         return (
             <div id="main-container">
                 <div id="play-area-div">
                     <div id="computer-player-and-table-container">
                         <ComputerPlayerContainer cards={this.state.computerPlayerCards}/>
-                        <PlayingTableContainer topCardOnTable={this.state.topCardOnTable} game={this.game} regularPlayer={this.regularPlayer}
-                                               pickedUpCardFromDeck={this.movePlayed}/>
-                        <div id="playerWonScreen" style={this.state.playerWon ? displayOverlayStyle : null}>
-                            <h1><span id="winningPlayerName"/> has won the game!</h1>
-                            <button className="green" onClick={this.restartGame}>Play again</button>
-                            <h3><u>Game statistics:</u></h3>
-                            <p id="gameStatistics"/>
-                            <p id="playerStatistics"/>
-                        </div>
+                        <PlayingTableContainer topCardOnTable={this.state.topCardOnTable} game={this.game}
+                                               regularPlayer={this.regularPlayer}
+                                               pickedUpCardFromDeck={this.movePlayed}
+                                               deckDisabled={this.state.activePlayer.isComputerPlayer() || this.state.inReplayMode}
+                                               highlightDeck={this.game.getPossibleMoveForActivePlayer() === null && !this.state.activePlayer.isComputerPlayer()}
+                        />
+                        <PlayerWonContainer playerWon={this.state.playerWon}
+                                            gameState={this.state.currentGameState}
+                                            statistics={this.state.statistics}
+                                            restartGameClick={this.restartGame}
+                                            startReplayClick={this.replayPrev}
+                        />
                     </div>
-                    <PlayerContainer player={this.regularPlayer} game={this.game} movePlayed={this.movePlayed}/>
+                    <PlayerContainer player={this.regularPlayer} cards={this.state.regularPlayerCards} game={this.game}
+                                     movePlayed={this.movePlayed} inReplayMode={this.state.inReplayMode}/>
                 </div>
 
                 <div id="statistics-div">
-                    <img src={takiLogo} alt="Taki Logo"
-                         style={imgStyle}/>
-                    <StatisticsContainer statistics={this.state.statistics} activePlayer={this.state.activePlayer}/>
+                    <img src={takiLogo} alt="Taki Logo" style={imgStyle}/>
+                    <StatisticsContainer statistics={this.state.statistics}
+                                         activePlayer={this.state.activePlayer}
+                                         inReplayMode={this.state.inReplayMode}
+                                         exitGame={this.exitGameClicked}
+                                         replayControls={this.replayControls}
+                                         gameEnded={this.game.getGameState().gameState === GameState.GAME_ENDED}
+                    />
                 </div>
             </div>
         );
     }
 }
-
-const displayOverlayStyle = {
-    display: "flex"
-};

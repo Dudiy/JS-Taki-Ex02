@@ -16,9 +16,8 @@ export default class PlayerContainer extends React.Component {
     constructor(args) {
         super(...args);
         this.state = {
-            movesPlayed: 0,
             colorPickerVisible: false,
-            changeColorCardSelected: null //TODO stopped here 28/5
+            changeColorCardSelected: null
         };
         this.cardClicked = this.cardClicked.bind(this);
         this.colorPickerClickedCard = this.colorPickerClickedCard.bind(this);
@@ -42,15 +41,7 @@ export default class PlayerContainer extends React.Component {
             this.props.game.makeMove(i_Card, additionalData)
         }
 
-        this.setState({
-            movesPlayed: this.state.movesPlayed + 1
-        });
-        let movePlayedRecord = {
-            cardPlaced: i_Card,
-            player: this.props.player,
-            // turnTime: this.props.game.getActivePlayer().getStatistics() //TODO get avg turn time until this move
-        };
-        this.props.movePlayed(movePlayedRecord);
+        this.props.movePlayed();
     }
 
     colorPickerClickedCard(color) {
@@ -62,12 +53,9 @@ export default class PlayerContainer extends React.Component {
     render() {
         return (
             <div id="player-container">
-                {this.props.player.getCards().map((card) => (
-                    <CardContainer card={card} key={card.getId()} game={this.props.game}
-                                   cardClicked={this.cardClicked}/>))}
-                <div id="player-overlay" className="screen-overlay" style={this.displayOverlay()}><h1>Please wait for
-                    you
-                    turn</h1></div>
+                {this.props.cards.map((card) => (
+                    <CardContainer card={card} key={card.getId()} cardClicked={this.cardClicked}/>))}
+                <div id="player-overlay" className="screen-overlay" style={this.displayOverlay()}><h1>{this.getDisplayOverlayText()}</h1></div>
                 <div id="colorPicker" className="screen-overlay"
                      style={this.state.colorPickerVisible ? displayOverlayStyle : null}>
                     <h2>Please choose a color: </h2>
@@ -82,8 +70,20 @@ export default class PlayerContainer extends React.Component {
         );
     };
 
+    getDisplayOverlayText(){
+        let overlayDisplayText = "";
+        if (this.props.game.getActivePlayer() !== this.props.player)
+            overlayDisplayText = "Please wait for your turn";
+        else if (this.props.inReplayMode)
+            overlayDisplayText = "Cannot play while in replay mode";
+        else if (this.props.game.getGameState().gameState === GameState.GAME_ENDED)
+            overlayDisplayText = "Game ended";
+
+        return overlayDisplayText;
+    }
+
     displayOverlay() {
-        if (this.props.game.getActivePlayer() !== this.props.player || this.props.game.getGameState().gameState === GameState.GAME_ENDED) {
+        if (this.props.game.getActivePlayer() !== this.props.player || this.props.game.getGameState().gameState === GameState.GAME_ENDED || this.props.inReplayMode) {
             return displayOverlayStyle;
         }
         else

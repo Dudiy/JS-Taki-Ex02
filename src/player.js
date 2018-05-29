@@ -125,7 +125,8 @@ export default class Player {
         return{
             avgTurnTime: this.getAverageTurnTime(),
             totalTurnsPlayed: this._turnsPlayed,
-            timesReachedSingleCard: this._timesReachedSingleCard
+            timesReachedSingleCard: this._timesReachedSingleCard,
+            numCardsInHand: this._cards.length
         }
     }
 
