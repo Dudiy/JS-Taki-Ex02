@@ -195,7 +195,9 @@ export default class Game {
         }
 
         // check if after the move there are more valid moves
-        if (this._gameState.gameState === GameState.OPEN_TAKI && activePlayer.getCardOfColor(cardPlaced.getColor()) !== undefined) {
+        if (this._gameState.gameState === GameState.OPEN_TAKI &&
+            activePlayer.getCardOfColor(cardPlaced.getColor()) !== undefined &&
+            cardPlaced.getValue() !== SpecialCard.SUPER_TAKI) {
             // taki open + player has more cards of the same color = player gets another turn;
         } else {
             if (this._gameState.gameState === GameState.OPEN_TAKI) {
@@ -224,10 +226,11 @@ export default class Game {
     _isValidMove(cardPlaced) {
         let isValid = true;
         let topCardOnTable = this._cardsOnTable.viewTopCard();
-        if (this._gameState.gameState === GameState.OPEN_TAKI) {
+        if (cardPlaced.getValue() === SpecialCard.SUPER_TAKI ||
+            cardPlaced.getValue() === SpecialCard.CHANGE_COLOR) {
+            // do nothing
+        } else if (this._gameState.gameState === GameState.OPEN_TAKI) {
             isValid = topCardOnTable.getColor() === cardPlaced.getColor();
-        } else if (this._gameState.gameState === GameState.SUPER_TAKI) {
-            // TODO (advanced game)
         } else if (this._gameState.gameState === GameState.OPEN_PLUS_2) {
             isValid = cardPlaced.getValue() === SpecialCard.PLUS_2;
         } else {
@@ -310,8 +313,8 @@ export default class Game {
         this._players[this._activePlayerIndex].startTurn();
     }
 
-    getPossibleMoveForActivePlayer() {
-        return this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove, this);
+    getPossibleMoveForActivePlayer(ignoreSuperTaki = false) {
+        return this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove, this, ignoreSuperTaki);
     }
 
     viewTopCardOnTable() {
@@ -321,7 +324,7 @@ export default class Game {
     takeCardsFromDeck() {
         let cardsTaken = [];
         // check if there is a possible move that the player can make
-        let card = this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove, this);
+        let card = this._players[this._activePlayerIndex].getPossibleMove(this._isValidMove, this, true);
         if (card !== null) {
             console.log("Cannot take card from deck when there is a possible move. \nThe card that can be places is: " + card.getColor() + ", " + card.getValue());
             return cardsTaken;
