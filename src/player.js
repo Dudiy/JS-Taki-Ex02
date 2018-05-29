@@ -72,7 +72,7 @@ export default class Player {
     // used for debugging
     getCardsStrArr() {
         let cardsToReturn = [];
-        this._cards.forEach((card) =>{
+        this._cards.forEach((card) => {
             return cardsToReturn.push(card.getColor() + " " + card.getValue());
         });
         return cardsToReturn.join(", ");
@@ -192,7 +192,7 @@ export default class Player {
         this._isLeave = true;
     }
 
-    // for testing
+// for testing
     printCardsInHandToConsole() {
         console.log("printing all cards in hand");
         for (let i = 0; i < this._cards.length; i++) {

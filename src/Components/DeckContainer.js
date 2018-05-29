@@ -14,7 +14,7 @@ export default class DeckContainer extends React.Component {
         super(...args);
         this.clickedDeck = this.clickedDeck.bind(this);
     }
-    
+
     clickedDeck() {
         if (this.props.deckDisabled)
             return;
