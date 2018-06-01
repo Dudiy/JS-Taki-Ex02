@@ -8,6 +8,8 @@
  * Or Mantzur - 204311997
  */
 import React from "react";
+import {SpecialCard, Color} from "../card";
+
 
 export default class CardContainer extends React.Component {
     constructor(args) {
@@ -21,8 +23,11 @@ export default class CardContainer extends React.Component {
             className = className.concat(" backOfCard ");
         else {
             className = className.concat((this.props.card.getColor() !== null) ? this.props.card.getColor() : " noColor");
-            if (this.props.isClickable)
+            if (this.props.isClickable) {
                 className = className.concat(" clickable-card ");
+            } else if (this.props.card.getValue() === SpecialCard.CHANGE_COLOR) {
+                className = className.concat(" change-to-" + this.props.card.getColor());
+            }
             if (this.props.card.getValue().length > 1)
                 className = className.concat(" textCard ");
         }
@@ -34,7 +39,8 @@ export default class CardContainer extends React.Component {
             <div
                 className={this.generateClassName()}
                 cardvalue={this.props.card} id={this.props.card.getId()}
-                onClick={(this.props.cardClicked !== undefined) ? this.props.cardClicked.bind(this, this.props.card) : null}>
+                onClick={(this.props.cardClicked !== undefined) ? this.props.cardClicked.bind(this, this.props.card) : null}
+            >
                 {this.props.card.getValue()}
             </div>
         );

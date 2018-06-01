@@ -24,6 +24,7 @@ export default class PlayingTableContainer extends React.Component {
     }
 
     render() {
+
         return (
             <div id='playing_table_container'>
                 <div style={spaceAboveStyle}/>
@@ -34,7 +35,8 @@ export default class PlayingTableContainer extends React.Component {
                                highlightDeck={this.props.highlightDeck}
                 />
                 <div align="center">
-                    <CardContainer id="topCard" card={this.props.topCardOnTable} isClickable={false} onClick={null}/>
+                    <CardContainer id="topCard" card={this.props.topCardOnTable} isClickable={false}
+                                   onClick={null} />
                 </div>
                 <div style={spaceBelowStyle}/>
                 <div id="notificationDiv" className={this.props.userMessage !== null ? 'fadeIn' : 'fadeOut'}>{this.props.userMessage}</div>
