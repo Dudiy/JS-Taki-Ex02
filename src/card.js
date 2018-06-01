@@ -42,6 +42,33 @@ export default class Card {
         return this._color;
     }
 
+    getUserMessage(){
+        let message = null;
+        switch (this._value){
+            case SpecialCard.PLUS_2:
+                message = "Plus 2: Next player must place +2 or take cards from the deck";
+                break;
+            case SpecialCard.SUPER_TAKI:
+                message = "Super Taki: Player may place all cards of the same color as the top card";
+                break;
+            case SpecialCard.CHANGE_COLOR:
+                // Change color doesn't need a message because there is a color picker
+                break;
+            case SpecialCard.TAKI:
+                message = "Taki: Player may place all cards of the same color as the taki card";
+                break;
+            case SpecialCard.STOP:
+                message = "Stop: skipping next player's turn";
+                break;
+            case SpecialCard.PLUS:
+                message = "Plus: Player gets another turn";
+                break;
+            default:
+                break;
+        }
+        return message;
+    }
+
     setColor(color) {
         if (this._value === SpecialCard.CHANGE_COLOR || this._value === SpecialCard.SUPER_TAKI) {
             this._color = color;

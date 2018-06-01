@@ -56,18 +56,6 @@ export default class BaseContainer extends React.Component {
                 if (this.state.currReplayIndex > 0)
                     this.callSetState(this.uiGameStatesArray[--this.state.currReplayIndex]);
             }
-            if (keyPressed.code === "KeyE") {
-                this.setState({inReplayMode: true});
-                if (this.state.currReplayIndex === null || this.state.currReplayIndex === undefined)
-                    this.state.currReplayIndex = this.uiGameStatesArray.length - 1;
-                if (this.state.currReplayIndex < this.uiGameStatesArray.length - 1)
-                    this.callSetState(this.uiGameStatesArray[++this.state.currReplayIndex]);
-            }
-            if (keyPressed.code === "KeyR") {
-                this.setState({inReplayMode: false});
-                this.state.currReplayIndex = null;
-                this.callSetState(this.uiGameStatesArray[this.uiGameStatesArray.length - 1]);
-            }
         }).bind(this);
         this.replayControls = {
             next: this.replayNext,
@@ -91,6 +79,7 @@ export default class BaseContainer extends React.Component {
     }
 
     generateGameState() {
+        let userMessage = this.game.viewTopCardOnTable().getUserMessage();
         return {
             playerWon: this.game.getGameState().gameState === GameState.GAME_ENDED,
             activePlayer: this.game.getActivePlayer(),
@@ -98,6 +87,7 @@ export default class BaseContainer extends React.Component {
             computerPlayerCards: this.game.getFirstComputerPlayer().getCards().slice(),
             topCardOnTable: this.game.viewTopCardOnTable(),
             currentGameState: this.game.getGameState(),
+            userMessage: userMessage !== null ? userMessage : null,
             statistics: {
                 gameStatistics: this.game.getStatistics(),
                 regularPlayerStats: this.game.getFirstHumanPlayer().getStatistics(),
@@ -120,6 +110,7 @@ export default class BaseContainer extends React.Component {
             computerPlayerCards: gameStateUI.computerPlayerCards,
             topCardOnTable: gameStateUI.topCardOnTable,
             currentGameState: gameStateUI.currentGameState,
+            userMessage: gameStateUI.userMessage,
             statistics: {
                 gameStatistics: gameStateUI.statistics.gameStatistics,
                 regularPlayerStats: gameStateUI.statistics.regularPlayerStats,
@@ -189,6 +180,7 @@ export default class BaseContainer extends React.Component {
                                                pickedUpCardFromDeck={this.movePlayed}
                                                deckDisabled={this.state.activePlayer.isComputerPlayer() || this.state.inReplayMode}
                                                highlightDeck={this.game.getPossibleMoveForActivePlayer() === null && !this.state.activePlayer.isComputerPlayer()}
+                                               userMessage={this.state.userMessage}
                         />
                         <PlayerWonContainer playerWon={this.state.playerWon}
                                             gameState={this.state.currentGameState}

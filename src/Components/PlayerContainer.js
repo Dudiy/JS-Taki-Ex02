@@ -25,7 +25,7 @@ export default class PlayerContainer extends React.Component {
 
     cardClicked(i_Card, additionalData) {
         let currGameState = this.props.game.getGameState().gameState;
-        if (i_Card.getValue() === SpecialCard.CHANGE_COLOR && currGameState !== GameState.OPEN_TAKI) {
+        if (i_Card.getValue() === SpecialCard.CHANGE_COLOR && currGameState !== GameState.OPEN_TAKI && currGameState !== GameState.OPEN_PLUS_2) {
             if (this.state.colorPickerVisible === false) {
                 this.setState({
                     colorPickerVisible: true,
@@ -46,7 +46,6 @@ export default class PlayerContainer extends React.Component {
 
     colorPickerClickedCard(color) {
         this.setState({colorPickerVisible: false, changeColorCardSelected: null});
-        // document.getElementById("deck").classList.remove("disabled-button");
         this.cardClicked(this.state.changeColorCardSelected, color);
     }
 
@@ -55,14 +54,17 @@ export default class PlayerContainer extends React.Component {
             <div id="player-container">
                 {this.props.cards.map((card) => (
                     <CardContainer card={card} key={card.getId()} cardClicked={this.cardClicked}/>))}
-                <div id="player-overlay" className="screen-overlay" style={this.displayOverlay()}><h1>{this.getDisplayOverlayText()}</h1></div>
+                <div id="player-overlay" className="screen-overlay" style={this.displayOverlay()}>
+                    <h1>{this.getDisplayOverlayText()}</h1></div>
                 <div id="colorPicker" className="screen-overlay"
                      style={this.state.colorPickerVisible ? displayOverlayStyle : null}>
                     <h2>Please choose a color: </h2>
-                    <div className="card red clickable-card" onClick={this.colorPickerClickedCard.bind(this, 'red')}/>
+                    <div className="card red clickable-card"
+                         onClick={this.colorPickerClickedCard.bind(this, 'red')}/>
                     <div className="card green clickable-card"
                          onClick={this.colorPickerClickedCard.bind(this, 'green')}/>
-                    <div className="card blue clickable-card" onClick={this.colorPickerClickedCard.bind(this, 'blue')}/>
+                    <div className="card blue clickable-card"
+                         onClick={this.colorPickerClickedCard.bind(this, 'blue')}/>
                     <div className="card yellow clickable-card"
                          onClick={this.colorPickerClickedCard.bind(this, 'yellow')}/>
                 </div>
@@ -70,7 +72,7 @@ export default class PlayerContainer extends React.Component {
         );
     };
 
-    getDisplayOverlayText(){
+    getDisplayOverlayText() {
         let overlayDisplayText = "";
         if (this.props.game.getActivePlayer() !== this.props.player)
             overlayDisplayText = "Please wait for your turn";

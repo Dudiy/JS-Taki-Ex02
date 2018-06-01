@@ -15,11 +15,11 @@ html, body {
     background-size: cover;
 }
 
-#play-area-div{
+#play-area-div {
     width: 70%;
 }
 
-#statistics-div{
+#statistics-div {
     height: 100%;
     width: 30%;
     display: flex;
@@ -60,7 +60,7 @@ html, body {
     justify-content: center;
 }
 
-#computer-player-and-table-container{
+#computer-player-and-table-container {
     height: 70%;
     display: flex;
     flex-direction: column;
@@ -68,12 +68,12 @@ html, body {
 }
 
 #player-container {
-     height: 30%;
-     display: flex;
-     justify-content: flex-start;
-     align-items: center;
-     overflow: auto;
- }
+    height: 30%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: auto;
+}
 
 #computer-player-container {
     height: 30%;
@@ -108,14 +108,14 @@ html, body {
     background: rgba(200, 200, 200, 0.7);
 }
 
-.screen-overlay>h1 {
+.screen-overlay > h1 {
     text-shadow: 0 0 10px whitesmoke;
     font-weight: bolder;
     width: fit-content;
     align-self: center;
     background-color: rgba(201, 200, 245, 0.9);
     border-radius: 10px;
-    padding: 5px 15px ;
+    padding: 5px 15px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.8);
 }
 
@@ -193,7 +193,7 @@ html, body {
     background-color: #c8f5c8;
 }
 
-.clickable-card:hover  {
+.clickable-card:hover {
     cursor: pointer;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     transform: scale(1.15);
@@ -216,7 +216,7 @@ html, body {
     background-size: cover;
 }
 
-.deckCard{
+.deckCard {
     transform: rotate(-45deg);
 }
 
@@ -260,7 +260,7 @@ td {
     opacity: 0.6;
 }
 
-button{
+button {
     border-radius: 4px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     border: none;
@@ -270,10 +270,47 @@ button{
     min-width: fit-content;
 }
 
-button:hover{
+button:hover {
     transform: scale(1.05);
 }
 
-button:active{
+button:active {
     transform: scale(1);
+}
+
+/*======================================================================================*/
+/*======================================= General ======================================*/
+/*======================================================================================*/
+/* The animation code */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    15%{
+        opacity: 100;
+    }
+    100% {
+        opacity: 100;
+    }
+}
+
+.fadeIn{
+    animation: fadeIn 2s;
+}
+
+.fadeOut{
+    animation: fadeIn 0.1s;
+    animation-direction: reverse;
+    opacity: 0;
+}
+
+#notificationDiv {
+    width: fit-content;
+    height: fit-content;
+    padding: 0.3em 1em;
+    align-self: center;
+    background: rgba(200, 200, 200, 0.9);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    border: black groove thin;
+    border-radius: 3px;
 }

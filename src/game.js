@@ -229,7 +229,7 @@ export default class Game {
         let topCardOnTable = this._cardsOnTable.viewTopCard();
         if (this._gameState.gameState === GameState.OPEN_TAKI) {
             isValid = topCardOnTable.getColor() === cardPlaced.getColor() || cardPlaced.getValue() === SpecialCard.SUPER_TAKI;
-        } else if (cardPlaced.getValue() === SpecialCard.CHANGE_COLOR) {
+        } else if (cardPlaced.getValue() === SpecialCard.CHANGE_COLOR && this._gameState.gameState !== GameState.OPEN_PLUS_2) {
             // do nothing
         } else if (this._gameState.gameState === GameState.OPEN_PLUS_2) {
             isValid = cardPlaced.getValue() === SpecialCard.PLUS_2;
@@ -263,6 +263,8 @@ export default class Game {
                 this._moveToNextPlayer(skipOnePlayer);
                 console.log("in case - Stop");
                 break;
+            case SpecialCard.SUPER_TAKI:
+                card.setColor(additionalData);
             case SpecialCard.TAKI:
                 // if the player put down a "taki" card and has more cards to put then set state to "openTaki"
                 if (this._players[this._activePlayerIndex].getCardOfColor(card.getColor()) !== undefined) {
@@ -273,11 +275,6 @@ export default class Game {
                     this._moveToNextPlayer();
                 }
                 console.log("in case - Taki");
-                break;
-            case SpecialCard.SUPER_TAKI:
-                card.setColor(additionalData);
-                this._gameState.gameState = GameState.OPEN_TAKI;
-                console.log("in case - Super Taki");
                 break;
             case SpecialCard.CHANGE_COLOR:
                 if (additionalData === undefined) {
