@@ -45,6 +45,8 @@ html, body {
     border: black groove thin;
     box-shadow: 5px 5px 30px black;
     font-size: 2vw;
+    min-height: fit-content;
+    min-width: fit-content;
 }
 
 #statistics-container > h5 {
@@ -263,6 +265,9 @@ button{
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     border: none;
     padding: 5px 10px;
+    flex-shrink: unset;
+    min-height: fit-content;
+    min-width: fit-content;
 }
 
 button:hover{

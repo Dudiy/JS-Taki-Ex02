@@ -132,5 +132,5 @@ export default class Deck {
 }
 
 Deck.CARD_NUMBER_OF_EACH_COLOR = 2;
-Deck.CHANGE_COLOR_AMOUNT = 40;
+Deck.CHANGE_COLOR_AMOUNT = 4;
 Deck.SUPER_TAKI_AMOUNT = 2;
