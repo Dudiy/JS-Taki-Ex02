@@ -75,7 +75,7 @@ export default class Deck {
             return null;
         }
 
-        let randIndex = Math.floor((Math.random() * 100) % this._cards.length);
+        let randIndex = Math.floor((Math.random() * 1000) % this._cards.length);
         return this._cards.splice(randIndex, 1)[0];
     }
 
@@ -132,5 +132,5 @@ export default class Deck {
 }
 
 Deck.CARD_NUMBER_OF_EACH_COLOR = 2;
-Deck.CHANGE_COLOR_AMOUNT = 4;
+Deck.CHANGE_COLOR_AMOUNT = 40;
 Deck.SUPER_TAKI_AMOUNT = 2;

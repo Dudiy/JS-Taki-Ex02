@@ -226,11 +226,10 @@ export default class Game {
     _isValidMove(cardPlaced) {
         let isValid = true;
         let topCardOnTable = this._cardsOnTable.viewTopCard();
-        if (cardPlaced.getValue() === SpecialCard.SUPER_TAKI ||
-            cardPlaced.getValue() === SpecialCard.CHANGE_COLOR) {
+        if (this._gameState.gameState === GameState.OPEN_TAKI) {
+            isValid = topCardOnTable.getColor() === cardPlaced.getColor() || cardPlaced.getValue() === SpecialCard.SUPER_TAKI;
+        } else if (cardPlaced.getValue() === SpecialCard.CHANGE_COLOR) {
             // do nothing
-        } else if (this._gameState.gameState === GameState.OPEN_TAKI) {
-            isValid = topCardOnTable.getColor() === cardPlaced.getColor();
         } else if (this._gameState.gameState === GameState.OPEN_PLUS_2) {
             isValid = cardPlaced.getValue() === SpecialCard.PLUS_2;
         } else {
