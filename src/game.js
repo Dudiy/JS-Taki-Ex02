@@ -197,6 +197,7 @@ export default class Game {
         // check if after the move there are more valid moves
         if (this._gameState.gameState === GameState.OPEN_TAKI &&
             activePlayer.getCardOfColor(cardPlaced.getColor()) !== undefined &&
+            // in order to set the color of super taki in _afterMoveOfSpecialCard()
             cardPlaced.getValue() !== SpecialCard.SUPER_TAKI) {
             // taki open + player has more cards of the same color = player gets another turn;
         } else {
