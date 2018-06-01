@@ -78,7 +78,7 @@ export default class BaseContainer extends React.Component {
     }
 
     initGame() {
-        this.game = new Game(GameType.ADVANCED, 2, "Taki Man", "ex1");
+        this.game = new Game(GameType.ADVANCED, 2, "Taki Man", "ex2");
         this.game.setNotifyOnMakeMove(this.updateUIGameState);
         this.regularPlayer = new Player("Human player", false);
         this.computerPlayer = new Player("Computer player", true);

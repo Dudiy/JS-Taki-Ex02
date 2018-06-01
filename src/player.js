@@ -3,6 +3,8 @@
  * Or Mantzur - 204311997
  */
 
+import {SpecialCard} from "./card";
+
 /**
  * can be human/computer player
  *
@@ -121,8 +123,8 @@ export default class Player {
         return this._timesReachedSingleCard;
     }
 
-    getStatistics(){
-        return{
+    getStatistics() {
+        return {
             avgTurnTime: this.getAverageTurnTime(),
             totalTurnsPlayed: this._turnsPlayed,
             timesReachedSingleCard: this._timesReachedSingleCard,
@@ -134,11 +136,13 @@ export default class Player {
      * @param isValidFunc
      * @returns {Card}
      */
-    getPossibleMove(isValidFunc, contextFunc) {
+    getPossibleMove(isValidFunc, contextFunc, ignoreSuperTaki = false) {
         let cardThatCanBePlaced = null;
         for (let i = 0; i < this._cards.length; i++) {
             if (isValidFunc.call(contextFunc, this._cards[i]) === true) {
-                cardThatCanBePlaced = this._cards[i];
+                if (this._cards[i].getValue() !== SpecialCard.SUPER_TAKI || !ignoreSuperTaki) {
+                    cardThatCanBePlaced = this._cards[i];
+                }
                 break;
             }
         }
