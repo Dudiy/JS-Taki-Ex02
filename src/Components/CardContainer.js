@@ -8,6 +8,8 @@
  * Or Mantzur - 204311997
  */
 import React from "react";
+import {SpecialCard, Color} from "../card";
+
 
 export default class CardContainer extends React.Component {
     constructor(args) {
@@ -23,6 +25,8 @@ export default class CardContainer extends React.Component {
             classNames.push((this.props.card.getColor() !== null) ? this.props.card.getColor() : "noColor");
             if (this.props.isClickable)
                 classNames.push("clickable-card");
+            else if (this.props.card.getValue() === SpecialCard.CHANGE_COLOR)
+                classNames.push("change-to-" + this.props.card.getColor()); //TODO should we keep this?
             if (this.props.card.getValue().length > 1)
                 classNames.push("textCard");
         }

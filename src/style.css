@@ -314,3 +314,39 @@ button:active {
     border: black groove thin;
     border-radius: 3px;
 }
+
+@keyframes change-to-red {
+    from {background-color: #f5f5f5;}
+    to {background-color: #f5c8c8;}
+}
+
+@keyframes change-to-green {
+    from {background-color: #f5f5f5;}
+    to {background-color: #c8f5c8;}
+}
+
+@keyframes change-to-blue {
+    from {background-color: #f5f5f5;}
+    to {background-color: #c9c8f5;}
+}
+
+@keyframes change-to-yellow {
+    from {background-color: #f5f5f5;}
+    to {background-color: #f4f5c8;}
+}
+
+.change-to-red{
+    animation: change-to-red 2s;
+}
+
+.change-to-green{
+    animation: change-to-green 2s;
+}
+
+.change-to-blue{
+    animation: change-to-blue 2s;
+}
+
+.change-to-yellow{
+    animation: change-to-yellow 2s;
+}
