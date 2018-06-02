@@ -16,17 +16,17 @@ export default class CardContainer extends React.Component {
     }
 
     generateClassName() {
-        let className = "card ";
+        let classNames = ["card"];
         if (this.props.isComputerPlayerCard)
-            className = className.concat(" backOfCard ");
+            classNames.push("backOfCard");
         else {
-            className = className.concat((this.props.card.getColor() !== null) ? this.props.card.getColor() : " noColor");
+            classNames.push((this.props.card.getColor() !== null) ? this.props.card.getColor() : "noColor");
             if (this.props.isClickable)
-                className = className.concat(" clickable-card ");
+                classNames.push("clickable-card");
             if (this.props.card.getValue().length > 1)
-                className = className.concat(" textCard ");
+                classNames.push("textCard");
         }
-        return className;
+        return classNames.join(' ');
     }
 
     render() {

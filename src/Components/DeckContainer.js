@@ -29,12 +29,22 @@ export default class DeckContainer extends React.Component {
         }
     }
 
+    generateClassName() {
+        let classNames = ['card', 'backOfCard', 'deckCard'];
+        if (this.props.highlightDeck)
+            classNames.push('highlightDeck');
+        if (!this.props.deckDisabled)
+            classNames.push('clickable-card');
+
+        return classNames.join(' ')
+    }
+
     render() {
         return (
             <div id='deck_container'>
                 <div align="center" style={deckStyle}>
                     <div id="deck"
-                         className={"card backOfCard deckCard " + (this.props.highlightDeck ? 'highlightDeck ' : ' ') + (this.props.deckDisabled ? ' ' : 'clickable-card ')}
+                         className={this.generateClassName()}
                          onClick={this.clickedDeck}/>
                 </div>
             </div>
