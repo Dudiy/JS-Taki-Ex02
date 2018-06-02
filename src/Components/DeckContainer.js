@@ -5,10 +5,6 @@
 
 import React from "react";
 
-const deckStyle = {
-    margin: '0 0 0 15vw'
-};
-
 export default class DeckContainer extends React.Component {
     constructor(args) {
         super(...args);
@@ -40,6 +36,10 @@ export default class DeckContainer extends React.Component {
     }
 
     render() {
+        const deckStyle = {
+            margin: '0 0 0 15vw'
+        };
+
         return (
             <div id='deck_container'>
                 <div align="center" style={deckStyle}>

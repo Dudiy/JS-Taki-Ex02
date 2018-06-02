@@ -16,7 +16,8 @@ export default class PlayerWonContainer extends React.Component {
             return (
                 <div id="playerWonScreen">
                     <h1>{this.props.gameState.additionalInfo.getName()} has won the game!</h1>
-                    <button className="green" onClick={this.props.restartGameClick}>Play again</button><br/>
+                    <button className="green" onClick={this.props.restartGameClick}>Play again</button>
+                    <br/>
                     <button className="green" onClick={this.props.startReplayClick}>View replay</button>
                     <h3><u>Game statistics:</u></h3>
                     <p>

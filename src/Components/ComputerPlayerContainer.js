@@ -3,10 +3,6 @@
  * Or Mantzur - 204311997
  */
 
-/**
- * Dudi Yecheskel - 200441749
- * Or Mantzur - 204311997
- */
 import React from "react";
 
 export default class ComputerPlayerContainer extends React.Component {

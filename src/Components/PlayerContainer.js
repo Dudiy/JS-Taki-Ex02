@@ -3,10 +3,6 @@
  * Or Mantzur - 204311997
  */
 
-/**
- * Dudi Yecheskel - 200441749
- * Or Mantzur - 204311997
- */
 import React from "react";
 import CardContainer from "./CardContainer";
 import {SpecialCard} from "../card";
@@ -49,6 +45,26 @@ export default class PlayerContainer extends React.Component {
         this.cardClicked(this.state.changeColorCardSelected, color);
     }
 
+    getDisplayOverlayText() {
+        let overlayDisplayText = "";
+        if (this.props.game.getActivePlayer() !== this.props.player)
+            overlayDisplayText = "Please wait for your turn";
+        else if (this.props.inReplayMode)
+            overlayDisplayText = "Cannot play while in replay mode";
+        else if (this.props.game.getGameState().gameState === GameState.GAME_ENDED)
+            overlayDisplayText = "Game ended";
+
+        return overlayDisplayText;
+    }
+
+    displayOverlay() {
+        if (this.props.game.getActivePlayer() !== this.props.player || this.props.game.getGameState().gameState === GameState.GAME_ENDED || this.props.inReplayMode) {
+            return displayOverlayStyle;
+        }
+        else
+            return null;
+    }
+
     render() {
         return (
             <div id="player-container">
@@ -71,26 +87,6 @@ export default class PlayerContainer extends React.Component {
             </div>
         );
     };
-
-    getDisplayOverlayText() {
-        let overlayDisplayText = "";
-        if (this.props.game.getActivePlayer() !== this.props.player)
-            overlayDisplayText = "Please wait for your turn";
-        else if (this.props.inReplayMode)
-            overlayDisplayText = "Cannot play while in replay mode";
-        else if (this.props.game.getGameState().gameState === GameState.GAME_ENDED)
-            overlayDisplayText = "Game ended";
-
-        return overlayDisplayText;
-    }
-
-    displayOverlay() {
-        if (this.props.game.getActivePlayer() !== this.props.player || this.props.game.getGameState().gameState === GameState.GAME_ENDED || this.props.inReplayMode) {
-            return displayOverlayStyle;
-        }
-        else
-            return null;
-    }
 }
 
 const displayOverlayStyle = {

@@ -3,21 +3,11 @@
  * Or Mantzur - 204311997
  */
 
-/**
- * Dudi Yecheskel - 200441749
- * Or Mantzur - 204311997
- */
 import React from "react";
 import button_pause from "../takiImages/button_pause.png";
 import button_play from "../takiImages/button_play.png";
 import button_prev from "../takiImages/button_prev.png";
 import button_next from "../takiImages/button_next.png";
-
-const imgStyle = {
-    width: '50px',
-    height: '50px',
-    alignSelf: 'center'
-};
 
 export default class StatisticsContainer extends React.Component {
     constructor(args) {
@@ -50,20 +40,31 @@ export default class StatisticsContainer extends React.Component {
     }
 
     render() {
+        const imgStyle = {
+            width: '50px',
+            height: '50px',
+            alignSelf: 'center'
+        };
+
         return (
             <div id="statistics-container">
                 <div>{this.props.inReplayMode ? "Replay mode - paused" : ("Game timer: " + this.state.timerValueStr)}</div>
                 <div className={"replay-controls-div"}>
                     <img src={button_prev} alt="prev" className={"replay-button"} style={imgStyle}
                          hidden={!this.props.inReplayMode} onClick={this.props.replayControls.prev}/>
-                    <img src={button_pause} alt="pause" className={(this.props.activePlayer.isComputerPlayer() ? 'disabled-button ' : ' ') + "replay-button"} style={imgStyle}
+                    <img src={button_pause} alt="pause"
+                         className={(this.props.activePlayer.isComputerPlayer() ? 'disabled-button ' : ' ') + "replay-button"}
+                         style={imgStyle}
                          hidden={this.props.inReplayMode} onClick={this.props.replayControls.pause}/>
                     <img src={button_play} alt="play" className={"replay-button"} style={imgStyle}
                          hidden={!this.props.inReplayMode} onClick={this.props.replayControls.resume}/>
                     <img src={button_next} alt="next" className={"replay-button"} style={imgStyle}
                          hidden={!this.props.inReplayMode} onClick={this.props.replayControls.next}/>
                 </div>
-                <button type="button" className={(this.props.activePlayer.isComputerPlayer() || this.props.inReplayMode ? 'disabled-button ' : ' ') + "red "} onClick={this.props.exitGame}>End game
+                <button type="button"
+                        onClick={this.props.exitGame}
+                        className={(this.props.activePlayer.isComputerPlayer() || this.props.inReplayMode ? 'disabled-button ' : ' ') + "red "}>
+                    End game
                 </button>
 
                 <h5>Cards remaining:</h5>

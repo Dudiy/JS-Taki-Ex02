@@ -3,13 +3,8 @@
  * Or Mantzur - 204311997
  */
 
-/**
- * Dudi Yecheskel - 200441749
- * Or Mantzur - 204311997
- */
 import React from "react";
 import {SpecialCard} from "../card";
-
 
 export default class CardContainer extends React.Component {
     constructor(args) {

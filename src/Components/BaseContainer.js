@@ -13,11 +13,6 @@ import takiLogo from "../takiImages/TAKI_logo.png";
 import PlayerWonContainer from "./PlayerWonContainer";
 
 const COMPUTER_DELAY = 1.5 * 1000;
-const imgStyle = {
-    width: 'fit-content',
-    height: 'fit-content',
-    alignSelf: 'center'
-};
 
 export default class BaseContainer extends React.Component {
     constructor(args) {
@@ -160,6 +155,11 @@ export default class BaseContainer extends React.Component {
     }
 
     render() {
+        const imgStyle = {
+            width: 'fit-content',
+            height: 'fit-content',
+            alignSelf: 'center'
+        };
         return (
             <div id="main-container">
                 <div id="play-area-div">
