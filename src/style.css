@@ -23,9 +23,9 @@ html, body {
     height: 100%;
     width: 30%;
     display: flex;
-    align-content: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 #statistics-container {
@@ -150,18 +150,22 @@ html, body {
     align-items: center;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
-    width: 6vw;
-    height: 15vh;
+    width: 7vw;
     border: black groove thin;
     border-radius: 5px;
-    padding: 2px 8px;
     font-size: 4vw;
     font-weight: bolder;
     text-shadow: 2px 2px 3px #9c9c9c;
     text-align: center;
     margin: 10px 5px;
     flex-shrink: 0;
+    position: relative;
+}
 
+.card:before{
+    content: "";
+    display: block;
+    padding-top: 150%;
 }
 
 .textCard {
@@ -336,17 +340,17 @@ button:active {
 }
 
 .change-to-red{
-    animation: change-to-red 2s;
+    animation: change-to-red 1s;
 }
 
 .change-to-green{
-    animation: change-to-green 2s;
+    animation: change-to-green 1s;
 }
 
 .change-to-blue{
-    animation: change-to-blue 2s;
+    animation: change-to-blue 1s;
 }
 
 .change-to-yellow{
-    animation: change-to-yellow 2s;
+    animation: change-to-yellow 1s;
 }
