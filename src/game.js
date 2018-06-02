@@ -3,12 +3,10 @@
  * Or Mantzur - 204311997
  */
 
-import Card, {Color, SpecialCard} from "./card";
+import {Color, SpecialCard} from "./card";
 import CardsOnTable from "./cardsOnTable";
 import Deck from "./deck";
-import Player from "./player";
 
-const COMPUTER_DELAY = 1.5 * 1000;
 const NUM_STARTING_CARDS = 8;
 
 export const GameType = {
@@ -48,7 +46,7 @@ export default class Game {
         this._gameState = {
             currColor: null,
             gameState: undefined,
-            additionalInfo: null // TODO (advanced game) will be used for counter on +2
+            additionalInfo: null
         };
         this._notifyOnMakeMove = null;
     }
@@ -176,8 +174,6 @@ export default class Game {
     makeMove(cardPlaced, additionalData) {
         // first, check move validation
         if (!this._isValidMove(cardPlaced)) {
-            // TODO change back to error
-            // throw new Error("Invalid move!");
             console.log("Invalid move!");
             return false;
         }
@@ -235,7 +231,6 @@ export default class Game {
             isValid = cardPlaced.getValue() === SpecialCard.PLUS_2;
         } else {
             isValid = topCardOnTable.getColor() === cardPlaced.getColor() || topCardOnTable.getValue() === cardPlaced.getValue() || cardPlaced.getValue() === SpecialCard.CHANGE_COLOR || cardPlaced.getValue() === SpecialCard.SUPER_TAKI;
-            // TODO (advanced game) - add any relevant special card
         }
 
         return isValid;

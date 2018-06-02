@@ -8,9 +8,6 @@
  * Or Mantzur - 204311997
  */
 import React from "react";
-import CardContainer from "./CardContainer";
-import {SpecialCard} from "../card";
-import {GameState} from "../game";
 
 export default class ComputerPlayerContainer extends React.Component {
     constructor(args) {

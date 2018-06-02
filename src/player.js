@@ -134,6 +134,8 @@ export default class Player {
 
     /**
      * @param isValidFunc
+     * @param contextFunc
+     * @param ignoreSuperTaki
      * @returns {Card}
      */
     getPossibleMove(isValidFunc, contextFunc, ignoreSuperTaki = false) {

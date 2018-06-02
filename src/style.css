@@ -320,37 +320,73 @@ button:active {
 }
 
 @keyframes change-to-red {
-    from {background-color: #f5f5f5;}
-    to {background-color: #f5c8c8;}
+    0%  {background:  radial-gradient(#f5f5f5 100%,#f5c8c8);}
+    10% {background:  radial-gradient(#f5f5f5 90%, #f5c8c8);}
+    20% {background:  radial-gradient(#f5f5f5 80%, #f5c8c8);}
+    30% {background:  radial-gradient(#f5f5f5 70%, #f5c8c8);}
+    40% {background:  radial-gradient(#f5f5f5 60%, #f5c8c8);}
+    50% {background:  radial-gradient(#f5f5f5 50%, #f5c8c8);}
+    60% {background:  radial-gradient(#f5f5f5 40%, #f5c8c8);}
+    70% {background:  radial-gradient(#f5f5f5 30%, #f5c8c8);}
+    80% {background:  radial-gradient(#f5f5f5 20%, #f5c8c8);}
+    90% {background:  radial-gradient(#f5f5f5 10%, #f5c8c8);}
+    100% {background: radial-gradient(#f5f5f5 0%,  #f5c8c8);}
 }
 
 @keyframes change-to-green {
-    from {background-color: #f5f5f5;}
-    to {background-color: #c8f5c8;}
+    0%  {background:  radial-gradient(#f5f5f5 100%, #64ff64);}
+    10% {background:  radial-gradient(#f5f5f5 90%, #64ff64);}
+    20% {background:  radial-gradient(#f5f5f5 80%, #64ff64);}
+    30% {background:  radial-gradient(#f5f5f5 70%, #64ff64);}
+    40% {background:  radial-gradient(#f5f5f5 60%, #64ff64);}
+    50% {background:  radial-gradient(#f5f5f5 50%, #64ff64);}
+    60% {background:  radial-gradient(#f5f5f5 40%, #64ff64);}
+    70% {background:  radial-gradient(#f5f5f5 30%, #64ff64);}
+    80% {background:  radial-gradient(#f5f5f5 20%, #64ff64);}
+    90% {background:  radial-gradient(#f5f5f5 10%, #64ff64);}
+    100% {background: radial-gradient(#f5f5f5 0%,  #64ff64);}
 }
 
 @keyframes change-to-blue {
-    from {background-color: #f5f5f5;}
-    to {background-color: #c9c8f5;}
+    0%  {background:  radial-gradient(#f5f5f5 100%,#6464ff);}
+    10% {background:  radial-gradient(#f5f5f5 90%, #6464ff);}
+    20% {background:  radial-gradient(#f5f5f5 80%, #6464ff);}
+    30% {background:  radial-gradient(#f5f5f5 70%, #6464ff);}
+    40% {background:  radial-gradient(#f5f5f5 60%, #6464ff);}
+    50% {background:  radial-gradient(#f5f5f5 50%, #6464ff);}
+    60% {background:  radial-gradient(#f5f5f5 40%, #6464ff);}
+    70% {background:  radial-gradient(#f5f5f5 30%, #6464ff);}
+    80% {background:  radial-gradient(#f5f5f5 20%, #6464ff);}
+    90% {background:  radial-gradient(#f5f5f5 10%, #6464ff);}
+    100% {background: radial-gradient(#f5f5f5 0%,  #6464ff);}
 }
 
 @keyframes change-to-yellow {
-    from {background-color: #f5f5f5;}
-    to {background-color: #f4f5c8;}
+    0%  {background:  radial-gradient(#f5f5f5 100%,#ffff64);}
+    10% {background:  radial-gradient(#f5f5f5 90%, #ffff64);}
+    20% {background:  radial-gradient(#f5f5f5 80%, #ffff64);}
+    30% {background:  radial-gradient(#f5f5f5 70%, #ffff64);}
+    40% {background:  radial-gradient(#f5f5f5 60%, #ffff64);}
+    50% {background:  radial-gradient(#f5f5f5 50%, #ffff64);}
+    60% {background:  radial-gradient(#f5f5f5 40%, #ffff64);}
+    70% {background:  radial-gradient(#f5f5f5 30%, #ffff64);}
+    80% {background:  radial-gradient(#f5f5f5 20%, #ffff64);}
+    90% {background:  radial-gradient(#f5f5f5 10%, #ffff64);}
+    100% {background: radial-gradient(#f5f5f5 0%,  #ffff64);}
 }
 
 .change-to-red{
-    animation: change-to-red 1s;
+    animation: change-to-red 800ms;
 }
 
 .change-to-green{
-    animation: change-to-green 1s;
+    animation: change-to-green 800ms;
 }
 
 .change-to-blue{
-    animation: change-to-blue 1s;
+    animation: change-to-blue 800ms;
 }
 
 .change-to-yellow{
-    animation: change-to-yellow 1s;
+    animation: change-to-yellow 800ms;
 }

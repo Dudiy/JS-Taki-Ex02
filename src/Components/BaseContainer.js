@@ -3,7 +3,6 @@
  * Or Mantzur - 204311997
  */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Game, {GameState, GameType} from "../game";
 import Player from "../player";
 import PlayingTableContainer from "./PlayingTableContainer";
@@ -13,6 +12,7 @@ import ComputerPlayerContainer from "./ComputerPlayerContainer";
 import takiLogo from "../takiImages/TAKI_logo.png";
 import PlayerWonContainer from "./PlayerWonContainer";
 
+const COMPUTER_DELAY = 1.5 * 1000;
 const imgStyle = {
     width: 'fit-content',
     height: 'fit-content',
@@ -28,16 +28,15 @@ export default class BaseContainer extends React.Component {
         this.initGame();
         this.state = this.generateGameState();
         this.computerPlayPromise = function () {
-            const p = new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     if (this.game.makeComputerMove.bind(this.game).apply()) {
                         resolve('the function resolved');
                     } else {
                         reject('the function rejected');
                     }
-                }, 1500);
+                }, COMPUTER_DELAY);
             });
-            return p;
         };
 
         this.movePlayed = this.movePlayed.bind(this);
@@ -48,15 +47,6 @@ export default class BaseContainer extends React.Component {
         this.replayPause = this.replayPause.bind(this);
         this.replayPrev = this.replayPrev.bind(this);
         this.replayResumeGame = this.replayResumeGame.bind(this);
-        document.onkeypress = (function (keyPressed) {
-            if (keyPressed.code === "KeyQ") {
-                this.setState({inReplayMode: true});
-                if (this.state.currReplayIndex === null || this.state.currReplayIndex === undefined)
-                    this.state.currReplayIndex = this.uiGameStatesArray.length - 1;
-                if (this.state.currReplayIndex > 0)
-                    this.callSetState(this.uiGameStatesArray[--this.state.currReplayIndex]);
-            }
-        }).bind(this);
         this.replayControls = {
             next: this.replayNext,
             prev: this.replayPrev,
